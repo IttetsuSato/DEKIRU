@@ -13,6 +13,7 @@ function Skyway() {
   const remoteVideo = useRef(null);
   const sendTrigger = useRef(null);
 
+
   //open: SkyWayサーバーとの接続が成功したタイミングで発火
   peer.on('open', () => {
     setMessages(messages + `=== サーバー接続成功 ===\n`);
@@ -50,16 +51,29 @@ function Skyway() {
     alert(err.message);
   });
 
+  //close: 接続が切れたときに発火
+  peer.on('close', () => {
+    remoteVideo.current.srcObject.getTracks().forEach(track => track.stop());
+    remoteVideo.current.srcObject = null;
+  });
+
   const makeCall = () => {
     if (!peer.open) {
       return;
     }
+
     //peer.call()で接続 => mediaConnectionに接続相手の情報が帰ってくる
     const mediaConnection = peer.call(callId, localVideo.current.srcObject);
     //相手の映像をvideo要素にセット
     mediaConnection.on('stream', async stream => {
       remoteVideo.current.srcObject = stream;
       await remoteVideo.current.play().catch(console.error);
+    });
+
+    //チャット通信
+    const dataConnection = peer.connect(callId);
+    dataConnection.on('data', data => {
+      setMessages(messages + `Remote: ${data}\n`) ;
     });
 
     //close: 接続が切れたときに発火
@@ -76,7 +90,8 @@ function Skyway() {
   }
 
   const onClickSend = () => {
-
+    setMessages(messages + `${localMessage}\n`);
+    setLocalMessage(null);
   }
 
   return (
@@ -94,7 +109,7 @@ function Skyway() {
                       </div>
 
                       <div>
-                        <div>YOUR ID:{myId}</div>
+                        <div>{myId}</div>
                         <input value={callId} onChange={e => setCallId(e.target.value)}></input>
                         <button onClick={makeCall}>発信</button>
                         <button onClick={endCall}>終了</button>
@@ -106,6 +121,9 @@ function Skyway() {
                         ref={sendTrigger}
                         onClick={onClickSend}>送信
                         </button>
+                        <textarea>
+                          {messages}
+                        </textarea>
                       </div>
 
                       <div>
