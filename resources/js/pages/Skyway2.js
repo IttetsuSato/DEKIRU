@@ -1,19 +1,25 @@
-import Peer from "skyway-js";
-import React,{ useState, useRef, useEffect, SfuRoom } from "react";
+import Peer,{SfuRoom} from "skyway-js";
+import React,{ useState, useRef, useEffect } from "react";
+import { TextField, Button } from '@material-ui/core';
+
+import CallIcon from '@mui/icons-material/Call';
+import CallEndIcon from '@mui/icons-material/CallEnd';
+import SendIcon from '@mui/icons-material/Send';
 
 function Skyway2(){
   const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
   const [remoteVideo, setRemoteVideo] = useState([]);
   const [localStream, setLocalStream] = useState('');
-  const [room, setRoom] = useState('');
   const localVideoRef = useRef(null);
 
+  
   //ユニークなルームIDを生成（今は定数）
   const roomId = 1;
-
+  
+  //useEffect実行時、自身のカメラ映像取得
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
-      .then( stream => {
+    .then( stream => {
       // 成功時にvideo要素にカメラ映像をセット
       setLocalStream(stream);
       if (localVideoRef.current) {
@@ -26,64 +32,93 @@ function Skyway2(){
       return;
     });
   }, []);
-
+  
   const onStart = () => {
     if(peer){
       if (!peer.open) {
         return;
       }
-
-      //peer.joinRoom()で接続 => tmpRoomに接続相手の情報が帰ってくる
-      const tmpRoom = peer.joinRoom(roomId, {
+      
+      //peer.joinRoom()で接続 => roomに接続相手の情報が帰ってくる
+      const room = peer.joinRoom(roomId, {
         mode: 'sfu',
         stream: localStream,
       });
-
-       //open: SkyWayサーバーとの接続が成功したタイミングで発火
-      tmpRoom.once("open", () => {
-        console.log("=== You joined ===\n");
-      });
-      //peerJoin: 誰かがroomに参加したときに発火
-      tmpRoom.on("peerJoin", (peerId) => {
-        console.log(`=== ${peerId} joined ===\n`);
-      });
-      //stream: 相手の映像の情報
-      tmpRoom.on("stream", async (stream) => {
-        setRemoteVideo([
-          ...remoteVideo,
-          { stream: stream, peerId: stream.peerId },
-        ]);
-      });
-      //peerLeave: 誰かがroomから退室したときに発火
-      tmpRoom.on("peerLeave", (peerId) => {
-        setRemoteVideo(
-          remoteVideo.filter((video) => {
-            if (video.peerId === peerId) {
-              video.stream.getTracks().forEach((track) => track.stop());
-            }
-            return video.peerId !== peerId;
-          })
-        );
-        console.log(`=== ${peerId} left ===\n`);
-      });
-      //stateに映像情報をセット
-      setRoom(tmpRoom);
-
+      console.log(room);
+      setEventListener(room);
     }
   }
+    
+  const setEventListener = (room) => {
+    const leaveTrigger = document.getElementById('leave-trigger');
+    const sendTrigger = document.getElementById('send-trigger');
+    const messageForm = document.getElementById('message-form');
+    const messages = document.getElementById('messages');
+    
+    
+    //open: SkyWayサーバーとの接続が成功したタイミングで発火
+    room.once("open", () => {
+      messages.textContent += '=== ルームに参加しました ===\n';
+    });
 
-  const onEnd = () => {
-    if (room) {
-      room.close();
-      setRemoteVideo((prev) => {
-        return prev.filter((video) => {
+    //peerJoin: 誰かがroomに参加したときに発火
+    room.on("peerJoin", (peerId) => {
+      messages.textContent += `=== ${peerId} が参加しました ===\n`;
+    });
+
+    //stream: 相手の映像の情報
+    room.on("stream", async (stream) => {
+      setRemoteVideo([
+        ...remoteVideo,
+        { stream: stream, peerId: stream.peerId },
+      ]);
+    });
+
+    //data: チャット受信
+    room.on("data", ({data, src}) => {
+      messages.textContent += `${src}: ${data}\n`;
+    })
+    
+    //peerLeave: 誰かがroomから退室したときに発火
+    room.on("peerLeave", (peerId) => {
+      setRemoteVideo(
+        remoteVideo.filter((video) => {
+          if (video.peerId === peerId) {
+            video.stream.getTracks().forEach((track) => track.stop());
+          }
+          return video.peerId !== peerId;
+        })
+      );
+        messages.textContent += `=== ${peerId} が退室しました ===\n`;
+    });
+
+    //close: 自身が退室したときに発火
+    room.once('close', () => {
+      sendTrigger.removeEventListener('click', onClickSend);
+      messages.textContent += '== ルームから退室しました ===\n';
+      setRemoteVideo(
+        remoteVideo.filter((video) => {
           video.stream.getTracks().forEach((track) => track.stop());
           return false;
-        });
-      });
-    }
-  }
+        })
+      );
+    });
 
+    //送信ボタンの処理
+    sendTrigger.addEventListener('click', () => onClickSend());
+    const onClickSend = () => {
+      const localMessage = messageForm.value;
+        if(localMessage){
+          room.send(localMessage);
+          messages.textContent += `あなた: ${localMessage}\n`;
+          messageForm.value = '';
+        }
+    }
+    
+    //退室ボタンの処理
+    leaveTrigger.addEventListener('click', () => room.close(), { once: true });
+  }
+  
   const castVideo = () => {
     return remoteVideo.map((video) => {
       return <RemoteVideo video={video} key={video.peerId} />;
@@ -92,13 +127,19 @@ function Skyway2(){
 
   return (
     <div>
-      <button onClick={() => onStart()}>start</button>
-      <button onClick={() => onEnd()}>end</button>
       <video
       ref={localVideoRef}
       style={{transform: 'scale(-1,1)'}}
       playsInline autoPlay muted></video>
+      <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+      <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
       {castVideo()}
+      <pre className="messages" id="messages"></pre>
+      <form>
+          <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
+          <Button id="send-trigger" color="primary" variant="contained" startIcon={<SendIcon />}>送信</Button>
+      </form>
+
     </div>
   );
 };
