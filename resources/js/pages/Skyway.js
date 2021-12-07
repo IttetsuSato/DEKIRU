@@ -1,143 +1,166 @@
-import React, {useState, useRef} from 'react';
-import Peer from 'skyway-js';
-const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
+import Peer,{SfuRoom} from "skyway-js";
+import React,{ useState, useRef, useEffect } from "react";
+import { TextField, Button } from '@material-ui/core';
+import Box from '@mui/material/Box';
 
+import CallIcon from '@mui/icons-material/Call';
+import CallEndIcon from '@mui/icons-material/CallEnd';
+import SendIcon from '@mui/icons-material/Send';
 
-function Skyway() {
-  const [myId, setMyId] = useState('');
-  const [callId, setCallId] = useState('');
-  const [localMessage, setLocalMessage] = useState('');
-  const [messages, setMessages] = useState('');
-  //DOM要素の取得
-  const localVideo = useRef(null);
-  const remoteVideo = useRef(null);
-  const sendTrigger = useRef(null);
+function Skyway(){
+  const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
+  const [remoteVideo, setRemoteVideo] = useState([]);
+  const [localStream, setLocalStream] = useState('');
+  const localVideoRef = useRef(null);
 
-
-  //open: SkyWayサーバーとの接続が成功したタイミングで発火
-  peer.on('open', () => {
-    setMessages(messages + `=== サーバー接続成功 ===\n`);
-    //PeerID取得
-    setMyId(peer.id);
-    // カメラ映像取得
+  
+  //ユニークなルームIDを生成（今は定数）
+  const roomId = 1;
+  
+  //useEffect実行時、自身のカメラ映像取得
+  useEffect(() => {
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
-      .then( stream => {
+    .then( stream => {
       // 成功時にvideo要素にカメラ映像をセット
-      localVideo.current.srcObject = stream;
+      setLocalStream(stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.play().catch((e) => console.log(e));
+      }
     }).catch( error => {
       // 失敗時にはエラーログを出力
       console.error('mediaDevice.getUserMedia() error:', error);
       return;
     });
-  });
-
-  //call: 相手から接続要求が来たタイミングで発火
-  peer.on('call', mediaConnection => {
-    mediaConnection.answer(localVideo.current.srcObject);
-    //相手の映像をvideo要素にセット
-    mediaConnection.on('stream', async stream => {
-      remoteVideo.current.srcObject = stream;
-    });
-
-    //close: 接続が切れたときに発火
-    mediaConnection.once('close', () => {
-      remoteVideo.current.srcObject.getTracks().forEach(track => track.stop());
-      remoteVideo.current.srcObject = null;
-    });
-  });
-
-  //error: 何らかのエラーで発火
-  peer.on('error', err => {
-    alert(err.message);
-  });
-
-  //close: 接続が切れたときに発火
-  peer.on('close', () => {
-    remoteVideo.current.srcObject.getTracks().forEach(track => track.stop());
-    remoteVideo.current.srcObject = null;
-  });
-
-  const makeCall = () => {
-    if (!peer.open) {
-      return;
+  }, []);
+  
+  const onStart = () => {
+    if(peer){
+      if (!peer.open) {
+        return;
+      }
+      
+      //peer.joinRoom()で接続 => roomに接続相手の情報が帰ってくる
+      const room = peer.joinRoom(roomId, {
+        mode: 'sfu',
+        stream: localStream,
+      });
+      console.log(room);
+      setEventListener(room);
     }
-
-    //peer.call()で接続 => mediaConnectionに接続相手の情報が帰ってくる
-    const mediaConnection = peer.call(callId, localVideo.current.srcObject);
-    //相手の映像をvideo要素にセット
-    mediaConnection.on('stream', async stream => {
-      remoteVideo.current.srcObject = stream;
-      await remoteVideo.current.play().catch(console.error);
+  }
+    
+  const setEventListener = (room) => {
+    const leaveTrigger = document.getElementById('leave-trigger');
+    const sendTrigger = document.getElementById('send-trigger');
+    const messageForm = document.getElementById('message-form');
+    const messages = document.getElementById('messages');
+    
+    
+    //open: SkyWayサーバーとの接続が成功したタイミングで発火
+    room.once("open", () => {
+      messages.textContent += '=== ルームに参加しました ===\n';
     });
 
-    //チャット通信
-    const dataConnection = peer.connect(callId);
-    dataConnection.on('data', data => {
-      setMessages(messages + `Remote: ${data}\n`) ;
+    //peerJoin: 誰かがroomに参加したときに発火
+    room.on("peerJoin", (peerId) => {
+      messages.textContent += `=== ${peerId} が参加しました ===\n`;
     });
 
-    //close: 接続が切れたときに発火
-    mediaConnection.once('close', () => {
-      remoteVideo.current.srcObject.getTracks().forEach(track => track.stop());
-      remoteVideo.current.srcObject = null;
+    //stream: 相手の映像の情報
+    room.on("stream", async (stream) => {
+      setRemoteVideo([
+        ...remoteVideo,
+        { stream: stream, peerId: stream.peerId },
+      ]);
     });
-  }
 
+    //data: チャット受信
+    room.on("data", ({data, src}) => {
+      messages.textContent += `${src}: ${data}\n`;
+    })
+    
+    //peerLeave: 誰かがroomから退室したときに発火
+    room.on("peerLeave", (peerId) => {
+      setRemoteVideo(
+        remoteVideo.filter((video) => {
+          if (video.peerId === peerId) {
+            video.stream.getTracks().forEach((track) => track.stop());
+          }
+          return video.peerId !== peerId;
+        })
+      );
+        messages.textContent += `=== ${peerId} が退室しました ===\n`;
+    });
 
-  //通話終了処理
-  const endCall = () => {
-    peer.destroy();
-  }
+    //close: 自身が退室したときに発火
+    room.once('close', () => {
+      sendTrigger.removeEventListener('click', onClickSend);
+      messages.textContent += '== ルームから退室しました ===\n';
+      setRemoteVideo(
+        remoteVideo.filter((video) => {
+          video.stream.getTracks().forEach((track) => track.stop());
+          return false;
+        })
+      );
+    });
 
-  const onClickSend = () => {
-    setMessages(messages + `${localMessage}\n`);
-    setLocalMessage(null);
+    //送信ボタンの処理
+    sendTrigger.addEventListener('click', () => onClickSend());
+    const onClickSend = () => {
+      const localMessage = messageForm.value;
+        if(localMessage){
+          room.send(localMessage);
+          messages.textContent += `あなた: ${localMessage}\n`;
+          messageForm.value = '';
+        }
+    }
+    
+    //退室ボタンの処理
+    leaveTrigger.addEventListener('click', () => room.close(), { once: true });
   }
+  
+  const castVideo = () => {
+    return remoteVideo.map((video) => {
+      return <RemoteVideo video={video} key={video.peerId} />;
+    });
+  };
 
   return (
-      <div className="container">
-          <div className="row justify-content-center">
-              <div className="col-md-8">
-                  <div className="card">
-                      <div>
-                        <video
-                        width="400px"
-                        ref={localVideo}
-                        style={{transform: 'scale(-1,1)'}}
-                        autoPlay muted playsInline>
-                        </video>
-                      </div>
+    <div>
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '25%' }}>
+          <video
+          width="100%"
+          ref={localVideoRef}
+          style={{transform: 'scale(-1,1)'}}
+          playsInline autoPlay muted></video>
+        </Box>
+        <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+        <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
+        {castVideo()}
+        <pre className="messages" id="messages"></pre>
+        <form>
+            <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
+            <Button id="send-trigger" color="primary" variant="contained" startIcon={<SendIcon />}>送信</Button>
+        </form>
+      </Box>
 
-                      <div>
-                        <div>{myId}</div>
-                        <input value={callId} onChange={e => setCallId(e.target.value)}></input>
-                        <button onClick={makeCall}>発信</button>
-                        <button onClick={endCall}>終了</button>
-                      </div>
-
-                      <div>
-                        <input value={localMessage} onChange={e => setLocalMessage(e.target.value)}></input>
-                        <button
-                        ref={sendTrigger}
-                        onClick={onClickSend}>送信
-                        </button>
-                        <textarea>
-                          {messages}
-                        </textarea>
-                      </div>
-
-                      <div>
-                        <video
-                        width="400px"
-                        ref={remoteVideo}
-                        autoPlay muted playsInline>
-                        </video>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+    </div>
   );
-}
+};
+
+const RemoteVideo = (props) => {
+  const {video} = props;
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = video.stream;
+      videoRef.current.play().catch((e) => console.log(e));
+    }
+  }, [props.video]);
+  return <video ref={videoRef} playsInline autoPlay muted></video>;
+};
 
 export default Skyway;

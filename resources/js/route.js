@@ -9,7 +9,6 @@ import Example from './pages/Example';
 import Home from './pages/Home';
 import PostEdit from './pages/PostEdit';
 import Skyway from './pages/Skyway';
-import Skyway2 from './pages/Skyway2';
 import UserIndex from './pages/User/UserIndex';
 import DekiruApp from './pages/src/DekiruApp.jsx';
 
@@ -23,7 +22,6 @@ import DekiruApp from './pages/src/DekiruApp.jsx';
               <Route path='/example' exact component={Example} />
               <Route path='/post/edit/:id' exact component={PostEdit} />
               <Route path='/skyway' exact component={Skyway} />
-              <Route path='/skyway2' exact component={Skyway2} />
             </Switch>
         </div>
     );
