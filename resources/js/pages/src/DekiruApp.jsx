@@ -1,11 +1,12 @@
-import logo from './logo.svg';
-
 import React from 'react';
 import './assets/styles/style.css'
-import Top from './Top.jsx';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import SignUp from './componets/SignUp';
+import Signin from './componets/login';
+import Top from './Top';
 
 
-export default class DekiruApp extends React.Component {
+export default class App extends React.Component {
   //初期化メソッド
   constructor(props) {
     super(props);
@@ -13,8 +14,13 @@ export default class DekiruApp extends React.Component {
 
   render() {
     return (
-      <Top />
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Signin} />
+          <Route exact path="/componets/SignUp" component={SignUp} />
+          <Route exact path="/Top" component={Top} />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }
- 

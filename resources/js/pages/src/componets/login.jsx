@@ -91,7 +91,7 @@ export default function SignInSide() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                component={LinkRouter} to="/componets/TopBar"
+                component={LinkRouter} to="/Top"
               >
                 ログイン
               </Button>
