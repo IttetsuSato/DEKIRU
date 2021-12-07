@@ -37,13 +37,10 @@ export default function Top() {
                         <isValue />
                         <BrowserRouter>
                             <Switch>
-                                <Route exact path="/" component={login} />
-                                <Route exact path="/componets/SignUp" component={SignUp} />
-                                <Route exact path="/componets/TopBar" component={TopBar} />
+                                <Route exact path="/Top" component={TopBar} />
                                 <Route exact path={"/componets/TopBar/QuettionPage"} component={QuestionPage} />
                                 <Route exact path={"/componets/TopBar/Question"} component={Basic} />
                                 <Route exact path={"/componets/TopBar/QuestionList"} component={QuestionList} />
-                                <Route exact path={"/componets/TopBar/Mypage"} component={Mypage} />
                                 <Route exact path={"/componets/TopBar/Question/Detail"} component={BasicDetail} />
                                 <Route exact path={"/componets/TopBar/Question/Detail/Confirm"} component={Confirm} />
                             </Switch>
