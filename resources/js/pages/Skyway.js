@@ -2,6 +2,7 @@ import Peer,{SfuRoom} from "skyway-js";
 import React,{ useState, useRef, useEffect } from "react";
 import { TextField, Button } from '@material-ui/core';
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper'
 
 import CallIcon from '@mui/icons-material/Call';
 import CallEndIcon from '@mui/icons-material/CallEnd';
@@ -121,31 +122,52 @@ function Skyway(){
   }
   
   const castVideo = () => {
-    return remoteVideo.map((video) => {
-      return <RemoteVideo video={video} key={video.peerId} />;
-    });
+    if(remoteVideo){
+      return remoteVideo.map((video) => {
+        if(video){
+          return <RemoteVideo video={video} key={video.peerId} />;
+        }else{
+          return (
+            <div>
+              <Box sx={{width: '75%', height: '100vh', 'backgroundColor': '#333'}}>
+    
+              </Box>
+            </div>
+            );
+        }
+      });
+    }
   };
 
   return (
     <div>
-      <Box sx={{ width: '100%' }}>
-        <Box sx={{ width: '25%' }}>
-          <video
-          width="100%"
-          ref={localVideoRef}
-          style={{transform: 'scale(-1,1)'}}
-          playsInline autoPlay muted></video>
+      <Box sx={{ width: '100%', 'backgroundColor': '#333', position: 'relative'}}>
+        {/* 相手の画面 */}
+        <Box sx={{ width: '75%', display: 'flex', 'justifyContent': 'center', margin: 'auto'}}>
+          {castVideo()}
         </Box>
-        <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
-        <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
-        {castVideo()}
-        <pre className="messages" id="messages"></pre>
-        <form>
-            <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
-            <Button id="send-trigger" color="primary" variant="contained" startIcon={<SendIcon />}>送信</Button>
-        </form>
+        {/* チャット */}
+        <Box sx={{width: '25%', 'backgroundColor': 'rgba(255,255,255,0.96)', height: '100vh', position: 'absolute', top: 0, right: 0, zIndex: 'modal', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+          {/* <Box id="messages" sx={{height: '100%'}}></Box> */}
+          <pre className="messages" id="messages"></pre>
+          <Box sx={{ display: 'flex'}}>
+              <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
+              <Button id="send-trigger" color="primary" variant="contained" startIcon={<SendIcon />}></Button>
+          </Box>
+        </Box>
+        {/* 操作バー */}
+        <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
+          <Box sx={{ width: '25%' }}>
+            <video
+            width="100%"
+            ref={localVideoRef}
+            style={{transform: 'scale(-1,1)'}}
+            playsInline autoPlay muted></video>
+          </Box>
+          <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+          <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
+        </Box>
       </Box>
-
     </div>
   );
 };
@@ -160,7 +182,7 @@ const RemoteVideo = (props) => {
       videoRef.current.play().catch((e) => console.log(e));
     }
   }, [props.video]);
-  return <video ref={videoRef} playsInline autoPlay muted></video>;
+  return <video width="100%" ref={videoRef} playsInline autoPlay muted></video>;
 };
 
 export default Skyway;
