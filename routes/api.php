@@ -3,6 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\BankController;
+use App\Http\Controllers\Api\CashCardController;
+use App\Http\Controllers\Api\CashFlowController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\IdentificationController;
+use App\Http\Controllers\Api\MovieController;
+use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\ValueController;
 
 /*
 |--------------------------------------------------------------------------
