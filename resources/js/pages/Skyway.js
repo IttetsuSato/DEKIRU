@@ -150,10 +150,6 @@ function Skyway(){
       });
     }
   };
-
-  const onClickMute = () =>{
-
-  }
   
 
   return (
