@@ -9,69 +9,39 @@ use Illuminate\Support\Facades\Hash;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-      $posts = Post::all();
-      return $posts;
+      $categories = Category::all();
+      return $categories;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-      $post = new Post;
-      $post->name = $request->name;
-      $post->content = $request->content;
-      $post->save();
-      return $post;
+      $category = new Category;
+      $category->name = $request->name;
+      $category->content = $request->content;
+      $category->save();
+      return $category;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-      $post = Post::find($id);
-      return $post;
+      $category = Category::find($id);
+      return $category;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request)
     {
-      $post = Post::find($request->id);
-      $post->name = $request->name;
-      $post->content = $request->content;
-      $post->save();
-      $posts = Post::all();
-      return $posts;
+      $category = Category::find($request->id);
+      $category->name = $request->name;
+      $category->content = $request->content;
+      $category->save();
+      $categories = Category::all();
+      return $categories;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-      Post::find($id)->delete();
+      Category::find($id)->delete();
     }
 }

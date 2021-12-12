@@ -9,58 +9,39 @@ use Illuminate\Support\Facades\Hash;
 
 class ValueController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+      $values = Value::all();
+      return $values;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+      $value = new Value;
+      $value->name = $request->name;
+      $value->content = $request->content;
+      $value->save();
+      return $value;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+      $value = Value::find($id);
+      return $value;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+      $value = Value::find($request->id);
+      $value->name = $request->name;
+      $value->content = $request->content;
+      $value->save();
+      $values = Value::all();
+      return $values;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+      Value::find($id)->delete();
     }
 }
