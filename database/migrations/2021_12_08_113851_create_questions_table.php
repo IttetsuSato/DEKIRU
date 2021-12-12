@@ -21,7 +21,7 @@ class CreateQuestionsTable extends Migration
             $table->integer('status'); //0:解決, 1: 受付中, 2:中止
             $table->timestamps();
             $table->foreignId('updated_by')->nullable();
-            $table->softDeletes($column = 'deleted_at', $precision = 0);
+            $table->softDeletes();
         });
     }
 

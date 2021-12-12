@@ -16,7 +16,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+      $posts = Post::all();
+      return $posts;
     }
 
     /**
@@ -27,7 +28,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $post = new Post;
+      $post->name = $request->name;
+      $post->content = $request->content;
+      $post->save();
+      return $post;
     }
 
     /**
@@ -38,7 +43,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+      $post = Post::find($id);
+      return $post;
     }
 
     /**
@@ -48,9 +54,14 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+      $post = Post::find($request->id);
+      $post->name = $request->name;
+      $post->content = $request->content;
+      $post->save();
+      $posts = Post::all();
+      return $posts;
     }
 
     /**
@@ -61,6 +72,6 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+      Post::find($id)->delete();
     }
 }

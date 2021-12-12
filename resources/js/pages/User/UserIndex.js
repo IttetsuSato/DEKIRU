@@ -68,6 +68,7 @@ function UserIndex() {
         })
         .then((res) => {
             const tempUsers = users
+            console.log(res.data);
             tempUsers.push(res.data);
             setUsers(tempUsers)
             setFormData('');

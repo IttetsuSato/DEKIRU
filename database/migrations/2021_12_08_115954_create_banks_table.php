@@ -23,7 +23,7 @@ class CreateBanksTable extends Migration
             $table->string('question');
             $table->timestamps();
             $table->foreignId('updated_by')->nullable();
-            $table->softDeletes($column = 'deleted_at', $precision = 0);
+            $table->softDeletes();
         });
     }
 
