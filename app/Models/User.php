@@ -8,6 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Identification;
+use App\Models\Bank;
+use App\Models\CashCard;
+use App\Models\Category;
+use App\Models\Value;
 
 class User extends Authenticatable
 {
@@ -45,4 +50,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function Bank()
+    {
+        return $this->hasOne(Bank::class);
+    }
+
+    public function Identification()
+    {
+        return $this->hasOne(Identification::class);
+    }
+
+    public function CashCard()
+    {
+        return $this->hasOne(CashCard::class);
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function values()
+    {
+        return $this->belongsToMany(Value::class);
+    }
 }
