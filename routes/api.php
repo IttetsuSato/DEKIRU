@@ -24,6 +24,14 @@ use App\Http\Controllers\Api\ValueController;
 */
 Route::group(['middleware' => 'api'], function(){
   Route::resource('users', UserController::class, ['except' => ['create', 'edit']]);
+  Route::resource('banks', BankController::class, ['except' => ['create', 'edit']]);
+  Route::resource('cash_cards', CashCardController::class, ['except' => ['create', 'edit']]);
+  Route::resource('cash_flows', CashFlowController::class, ['except' => ['create', 'edit']]);
+  Route::resource('categories', CategoryController::class, ['except' => ['create', 'edit']]);
+  Route::resource('identifications', IdentificationController::class, ['except' => ['create', 'edit']]);
+  Route::resource('movies', MovieController::class, ['except' => ['create', 'edit']]);
+  Route::resource('questions', QuestionController::class, ['except' => ['create', 'edit']]);
+  Route::resource('values', ValueController::class, ['except' => ['create', 'edit']]);
   Route::get('posts', 'App\Http\Controllers\Api\PostController@index');
   Route::post('post/create', 'App\Http\Controllers\Api\PostController@create');
   Route::post('edit', 'App\Http\Controllers\Api\PostController@edit');
