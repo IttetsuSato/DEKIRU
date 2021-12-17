@@ -42,6 +42,7 @@
         "react-router-dom": "^5.3.0",
         "react-scripts": "4.0.3",
         "react-swipeable-views": "^0.14.0",
+        "recharts": "^2.1.8",
         "skyway-js": "^4.4.3",
         "web-vitals": "^1.1.2"
     }

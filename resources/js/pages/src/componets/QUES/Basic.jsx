@@ -1,18 +1,37 @@
-import { Grid } from '@material-ui/core'
-import * as React from 'react';
+import { Grid } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
 function Basic(props) {
+    const [selectedCategory, setSelectedCategory] = useState(localStorage.getItem("selectedCategory"));
+    const [categoriesArray, setCategoriesArray] = useState([]);
 
-    const [category, setCategory] = React.useState(localStorage.getItem('category'));
-
+    
+    useEffect(() => {
+      getCategoryData();
+    },[])
+    
     const handleChange = (event) => {
-      setCategory(event.target.value);
-      localStorage.setItem('category', event.target.value);
-
+      setSelectedCategory(event.target.value);
+      localStorage.setItem('selectedCategory', event.target.value);
     };
+
+    //DBからカテゴリ一覧を取得
+    const getCategoryData = () => {
+      axios
+          .get('/api/categories')
+          .then(response => {
+              setCategoriesArray(response.data);
+              console.log(response.data);
+          })
+          .catch((error) => {
+              console.log('通信エラー: '+ error);
+          });
+    }
+
+
 
     return (
         <Grid container>
@@ -22,12 +41,13 @@ function Basic(props) {
                 <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={category}
                     label="カテゴリー"
+                    defaultValue={localStorage.getItem("selectedCategory")}
                     onChange={handleChange}
                 >
-                    <MenuItem value={'agedCare'}>介護系</MenuItem>
-                    <MenuItem value={'childCare'}>育児系</MenuItem>
+                  {categoriesArray.map((categoryArray, index) => (
+                    <MenuItem value={categoryArray.category} key={index}>{categoryArray.category}</MenuItem>
+                  ))}
                 </Select>
             </Grid>
         </Grid>

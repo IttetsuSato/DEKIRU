@@ -10,7 +10,7 @@ import SignUp from './componets/SignUp';
 import Basic from './componets/QUES/Basic';
 import BasicDetail from './componets/USERS/BasicDetail';
 import Confirm from './componets/QUES/Confirm';
-import QuestionList from './componets/QuestionList';
+import QuestionList from './componets/QUES/QuestionList';
 import Mypage from './componets/USERS/Mypage';
 import Notific from './componets/USERS/notific';
 import Setting from './componets/USERS/setting';

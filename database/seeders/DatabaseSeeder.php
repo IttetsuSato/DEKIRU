@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         PostsTableSeeder::class,
         UserSeeder::class,
         QuestionSeeder::class,
+        CategorySeeder::class,
       ]);
         // \App\Models\User::factory(10)->create();
     }
