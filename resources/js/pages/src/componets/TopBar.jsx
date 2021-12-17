@@ -8,11 +8,12 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Content from './QUES/Content';
-import QuestionList from './QuestionList';
+import QuestionList from './QUES/QuestionList';
 import Mypage from './USERS/Mypage';
 import { Link  as LinkRouter } from 'react-router-dom';
 import QuestionPage from './QUES/QuestionPage'
 import QuestionUser from './QUES/QuestionUesr'
+import QuestionSearch from './QUES/QuestionSearch';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -71,24 +72,20 @@ export default function TopBar() {
         >
           <Tab label="質問" {...a11yProps(0)} />
           <Tab label="質問一覧" {...a11yProps(1)} />
-          <Tab label="質問中" {...a11yProps(2)} />
-          <Tab label="" {...a11yProps(3)} />
+
         </Tabs>
       </AppBar>
       <SwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={value}
         onChangeIndex={handleChangeIndex}
-        
       >
         <TabPanel value={value} index={0} dir={theme.direction} >
           <Content />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <QuestionList /> 
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          <QuestionUser />
+          <QuestionSearch />
+          {/* <QuestionList />  */}
         </TabPanel>
       </SwipeableViews>
     </Box>
