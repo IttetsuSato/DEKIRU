@@ -19,7 +19,7 @@ const rows = [
 
 */}
 
-function Confirm(props) {
+function CreateQuestion3(props) {
     const storedCategory = localStorage.getItem('category')
     const storedTiltle = localStorage.getItem('title')
     const storedDetail = localStorage.getItem('detail')
@@ -56,4 +56,4 @@ function Confirm(props) {
     )
 }
 
-export default Confirm
+export default CreateQuestion3

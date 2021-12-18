@@ -5,7 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
 import Tooltip from '@material-ui/core/Tooltip';
 
-function Optional(props) {
+function CreateQuestion2(props) {
 
     const [title, setTitle] = React.useState(localStorage.getItem('title'));
     const [detail, setDetail] = React.useState(localStorage.getItem('detail'));
@@ -59,4 +59,4 @@ function Optional(props) {
     )
 }
 
-export default Optional
+export default CreateQuestion2

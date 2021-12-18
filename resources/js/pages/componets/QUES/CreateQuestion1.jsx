@@ -4,7 +4,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
-function Basic(props) {
+function CreateQuestion1(props) {
     const [selectedCategory, setSelectedCategory] = useState(localStorage.getItem("selectedCategory"));
     const [categoriesArray, setCategoriesArray] = useState([]);
 
@@ -54,4 +54,4 @@ function Basic(props) {
     )
 }
 
-export default Basic
+export default CreateQuestion1

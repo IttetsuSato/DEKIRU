@@ -5,9 +5,9 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Basic from "./Basic";
-import Optional from "./Optional";
-import Confirm from "./Confirm";
+import CreateQuestion1 from "./CreateQuestion1";
+import CreateQuestion2 from "./CreateQuestion2";
+import CreateQuestion3 from "./CreateQuestion3";
 //import { KEYS, setItem, getItem, removeItem } from "./LocalStorage";
 import { Link  as LinkRouter } from 'react-router-dom';
 
@@ -22,11 +22,11 @@ function getSteps() {
 function getStepContent(stepIndex) {
     switch (stepIndex) {
         case 0:
-            return <Basic />;
+            return <CreateQuestion1 />;
         case 1:
-            return <Optional />;
+            return <CreateQuestion2 />;
         case 2:
-            return <Confirm />;
+            return <CreateQuestion3 />;
         default:
             return 'Unknown stepIndex';
     }
@@ -36,6 +36,7 @@ function getStepContent(stepIndex) {
 function Content() {
     const steps = getSteps();
     const [activeStep, setActiveStep] = React.useState(0);
+
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         
@@ -59,22 +60,15 @@ function Content() {
                         </Step>
                     ))}
                 </Stepper>
-                {activeStep === steps.length ? (
-                    <Basic />
-                ) : (
-                    <div>
-                        <Typography >{getStepContent(activeStep)}</Typography>
-                        <Button
-                            disabled={activeStep === 0}
-                            onClick={handleBack}
-                        >
-                            戻る
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} >
-                            {activeStep === steps.length - 1 ? '送信' : '次へ'}
-                        </Button>
-                    </div>
-                )}
+
+                <Typography >{getStepContent(activeStep)}</Typography>
+
+                <Button disabled={activeStep === 0} onClick={handleBack}>
+                    戻る
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleNext} >
+                    {activeStep === steps.length - 1 ? '送信' : '次へ'}
+                </Button>
             </Grid>
         </Grid>
     )

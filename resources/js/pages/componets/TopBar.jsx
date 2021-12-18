@@ -80,13 +80,16 @@ export default function TopBar() {
         index={value}
         onChangeIndex={handleChangeIndex}
       >
+
         <TabPanel value={value} index={0} dir={theme.direction} >
           <Content />
         </TabPanel>
+
         <TabPanel value={value} index={1} dir={theme.direction}>
           <QuestionSearch />
           {/* <QuestionList />  */}
         </TabPanel>
+        
       </SwipeableViews>
     </Box>
   );

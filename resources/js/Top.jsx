@@ -8,9 +8,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Copyright from './pages/componets/Copyright';
 import login from './pages/componets/login'
 import SignUp from './pages/componets/SignUp';
-import Basic from './pages/componets/QUES/Basic';
 import BasicDetail from './pages/componets/USERS/BasicDetail';
-import Confirm from './pages/componets/QUES/Confirm';
+import Confirm from './pages/componets/QUES/CreateQuestion3';
 import QuestionList from './pages/componets/QUES/QuestionList';
 import Mypage from './pages/componets/USERS/Mypage';
 import Notific from './pages/componets/USERS/notific';
@@ -38,7 +37,6 @@ export default function Top() {
                             <Route exact path="/componets/SignUp" component={SignUp} />
                             <Route exact path="/componets/TopBar" component={TopBar} />
                             <Route exact path={"/componets/TopBar/QuettionPage"} component={QuestionPage} />
-                            <Route exact path={"/componets/TopBar/Question"} component={Basic} />
                             <Route exact path={"/componets/TopBar/QuestionList"} component={QuestionList} />
                             <Route exact path={"/componets/TopBar/Mypage"} component={Mypage} />
                             <Route exact path={"/componets/TopBar/Question/Detail"} component={BasicDetail} />
