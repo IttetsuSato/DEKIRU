@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -28,8 +28,9 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function QuestionList() {
-  const [expanded, setExpanded] = React.useState(false);
+export default function QuestionList(props) {
+  const { question } = props;
+  const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -45,21 +46,19 @@ export default function QuestionList() {
           action={<IconButton aria-label="settings">
             <MoreVertIcon />
           </IconButton>}
-          title="DBからとってくる「Title」"
-          subheader="September 14, 2016（DBからとってくる）" />
+          title={question.title}
+          subheader={question.created_at} />
         {/*画像の利用の場合使用
-    <CardMedia
-      component="img"
-      height="194"
-      image="/static/images/cards/paella.jpg"
-      alt="Paella dish"
-    />
-    */}
+        <CardMedia
+          component="img"
+          height="194"
+          image="/static/images/cards/paella.jpg"
+          alt="Paella dish"
+        />
+        */}
         <CardContent>
           <Typography variant="body2" color="text.secondary">
-            This impressive paella is a perfect party dish and a fun meal to cook
-            together with your guests. Add 1 cup of frozen peas along with the mussels,
-            if you like.
+            {question.content}
           </Typography>
         </CardContent>
 

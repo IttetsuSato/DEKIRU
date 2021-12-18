@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -48,10 +48,29 @@ export default function QuestionSearch() {
     const [filterQuery, setFilterQuery] = useState({});
     // ソート条件
     const [sort, setSort] = useState({});
+    //DBからとってきた質問
+    const [questions, setQuestions] = useState([]);
 
     const [values, setValues] = React.useState({
         amount: '',
     });
+
+    useEffect(() => {
+      getQuestionsData();
+    },[])
+  
+    //一覧情報を取得しステートquestionsにセットする
+    const getQuestionsData = () => {
+      axios
+          .get('/api/questions')
+          .then(response => {
+              setQuestions(response.data);
+              console.log(response.data);
+          })
+          .catch(() => {
+              console.log('通信に失敗しました');
+          });
+    }
 
     const filteredTask = useMemo(() => {
         let tmpTasks = tasks;
@@ -175,15 +194,24 @@ export default function QuestionSearch() {
                 </thead> */}
                 <tbody>
                     {
-                        filteredTask.map((task) => {
+                        questions.map((question) => {
                             return (
-                                <tr key={task.id}>
+                                <tr key={question.id}>
                                     <td>
-                                        <QuestionList Category_id ={task.category}  Title = {task.title} Question={task.question} />
+                                        <QuestionList question ={question} />
                                     </td>
                                 </tr>
                             );
                         })
+                        // filteredTask.map((task) => {
+                        //     return (
+                        //         <tr key={task.id}>
+                        //             <td>
+                        //                 <QuestionList Category_id ={task.category}  Title = {task.title} Question={task.question} />
+                        //             </td>
+                        //         </tr>
+                        //     );
+                        // })
                     }
                 </tbody>
             </table>

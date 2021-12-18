@@ -14,7 +14,7 @@ class QuestionSeeder extends Seeder
      */
     public function run()
     {
-      for($i = 1; $i<= 10; $i++){
+      for($i = 1; $i<= 3; $i++){
         DB::table('questions')->insert([
           'user_id'      => $i,
           'category_id' => 1,
