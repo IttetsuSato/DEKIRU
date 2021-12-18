@@ -17,7 +17,8 @@ class CreateQuestionsTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('category_id');
-            $table->string('question');
+            $table->string('title');
+            $table->string('content');
             $table->integer('status'); //0:解決, 1: 受付中, 2:中止
             $table->timestamps();
             $table->foreignId('updated_by')->nullable();

@@ -18,7 +18,8 @@ class QuestionSeeder extends Seeder
         DB::table('questions')->insert([
           'user_id'      => $i,
           'category_id' => 1,
-          'question' => 'どうやってこのアプリを使うんですか？',
+          'title' => 'どうやってこのアプリを使うんですか？',
+          'content' => 'どうやってこのアプリを使うんですか？直接教えてください',
           'status' => 1,
           'created_at'     => now(),
           'updated_at'     => now(),

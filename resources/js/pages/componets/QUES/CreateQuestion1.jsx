@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
 function CreateQuestion1(props) {
-    const [selectedCategory, setSelectedCategory] = useState(localStorage.getItem("selectedCategory"));
+    const [localCategory, setLocalCategory] = useState(localStorage.getItem("localCategory"));
     const [categoriesArray, setCategoriesArray] = useState([]);
 
     
@@ -13,11 +13,6 @@ function CreateQuestion1(props) {
       getCategoryData();
     },[]);
     
-    const handleChange = (event) => {
-      setSelectedCategory(event.target.value);
-      localStorage.setItem('selectedCategory', event.target.value);
-    };
-
     //DBからカテゴリ一覧を取得
     const getCategoryData = () => {
       axios
@@ -31,6 +26,12 @@ function CreateQuestion1(props) {
           });
     }
 
+    const handleChange = (event) => {
+      setLocalCategory(event.target.value);
+      localStorage.setItem('localCategory', event.target.value);
+    };
+
+
 
 
     return (
@@ -42,7 +43,7 @@ function CreateQuestion1(props) {
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     label="カテゴリー"
-                    defaultValue={localStorage.getItem("selectedCategory")}
+                    defaultValue={localStorage.getItem("localCategory")}
                     onChange={handleChange}
                 >
                   {categoriesArray.map((categoryArray, index) => (
