@@ -16,15 +16,18 @@ export default function QuestionSearch() {
             {
                 id: 1,
                 title: '最初のタスク',
-                category: 1
+                category: 1,
+                question: '子供が泣いてどうしよう'
             }, {
                 id: 2,
                 title: '2番目のタスク',
-                category: 2
+                category: 2,
+                question: '高齢者が急に嘔吐してどうしよう'
             }, {
                 id: 3,
                 title: '3番目のタスク',
-                category: 1
+                category: 1,
+                question: '子供が４０度の熱を出してしまって。。。どうすれば良いでしょうか'
             }
         ],
         categories: [
@@ -55,6 +58,7 @@ export default function QuestionSearch() {
 
         // 入力した文字は小文字にする
         const filterTitle = filterQuery.title && filterQuery.title.toLowerCase();
+        const filterQuestion = filterQuery.question && filterQuery.question.toLowerCase();
 
         // 絞り込み検索
         tmpTasks = tmpTasks.filter(row => {
@@ -66,7 +70,13 @@ export default function QuestionSearch() {
             ) {
                 return false;
             }
-
+            // 質問内容で絞り込み
+            if (
+                filterQuery.question &&
+                String(row.question).toLowerCase().indexOf(filterQuestion) === -1
+            ) {
+                return false;
+            }
             // カテゴリーで絞り込み
             if (
                 filterQuery.category_id &&
@@ -108,20 +118,31 @@ export default function QuestionSearch() {
     return (
         <div className="wrap">
             <div className="filter-box">
-                <FormControl sx={{ m: 1, minWidth: 240}}>
+                <FormControl sx={{ m: 1, minWidth: 240 }}>
                     <InputLabel htmlFor="outlined-adornment-amount">検索ワード</InputLabel>
 
                     <OutlinedInput
                         id="outlined-adornment-amount"
-                        placeholder="タイトル"
+                        placeholder="質問内容"
                         value={filterQuery.title || ''}
                         onChange={handleFilter}
                         name="title"
                     />
                 </FormControl>
+                <FormControl sx={{ m: 1, minWidth: 240 }}>
+                    <InputLabel htmlFor="outlined-adornment-amount">検索ワード</InputLabel>
+
+                    <OutlinedInput
+                        id="outlined-adornment"
+                        placeholder="質問内容"
+                        value={filterQuery.question || ''}
+                        onChange={handleFilter}
+                        name="question"
+                    />
+                </FormControl>
                 <div className="input-group">
                     <FormControl variant="filled" sx={{ m: 1, minWidth: 240 }}>
-                    <InputLabel id="demo-simple-select-filled-label">カテゴリー選択</InputLabel>
+                        <InputLabel id="demo-simple-select-filled-label">カテゴリー選択</InputLabel>
                         <Select
                             name="category_id"
                             value={filterQuery.category_id}
@@ -145,25 +166,20 @@ export default function QuestionSearch() {
             </div>
 
             <table>
-                <thead>
+                {/* <thead>
                     <tr>
                         <th onClick={() => handleSort('id')}>ID</th>
                         <th>タイトル</th>
                         <th onClick={() => handleSort('category')}>カテゴリー</th>
                     </tr>
-                </thead>
+                </thead> */}
                 <tbody>
                     {
                         filteredTask.map((task) => {
                             return (
                                 <tr key={task.id}>
-                                    <td>{task.id}</td>
-                                    <td>{task.title}</td>
                                     <td>
-                                        {
-                                            task.category ?
-                                                categories.find(c => c.id === task.category).title : ''
-                                        }
+                                        <QuestionList Category_id ={task.category}  Title = {task.title} Question={task.question} />
                                     </td>
                                 </tr>
                             );
@@ -171,7 +187,7 @@ export default function QuestionSearch() {
                     }
                 </tbody>
             </table>
-            <QuestionList />
+
         </div>
     );
 }
