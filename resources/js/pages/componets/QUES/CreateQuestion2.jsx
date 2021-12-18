@@ -7,26 +7,30 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 function CreateQuestion2(props) {
 
-    const [title, setTitle] = React.useState(localStorage.getItem('title'));
-    const [detail, setDetail] = React.useState(localStorage.getItem('detail'));
+  const { formData } = props;
+    const [localTitle, setLocalTitle] = React.useState(localStorage.getItem('localTitle'));
+    const [localDetail, setLocalDetail] = React.useState(localStorage.getItem('localDetail'));
 
     const handleTitleChange = (event) => {
-        setTitle(event.target.value);
-        localStorage.setItem('title', event.target.value);
+        setLocalTitle(event.target.value);
+        localStorage.setItem('localTitle', event.target.value);
+        formData.title = event.target.value;
     };
     const handleDetailChange = (event) => {
-        setDetail(event.target.value);
-        localStorage.setItem('detail', event.target.value);
+        setLocalDetail(event.target.value);
+        localStorage.setItem('localDetail', event.target.value);
+        formData.content = event.target.value;
     };
     return (
         <Grid container>
             <Grid sm={2} />
             <Grid lg={8} sm={8} spacing={10}>
                 <TextField
+                    name="title"
                     label="タイトル"
                     fullWidth
                     margin="normal"
-                    value={title}
+                    value={localTitle}
                     placeholder="【至急】〇〇〇..."
                     onChange={handleTitleChange}
                 />
@@ -37,13 +41,14 @@ function CreateQuestion2(props) {
                     arrow
                 >
                     <TextField
+                        name="content"
                         label="詳細"
                         fullWidth
                         margin="normal"
                         rows={8}
                         multiline
                         variant="outlined"
-                        value={detail}
+                        value={localDetail}
                         onChange={handleDetailChange}
                         placeholder="
                                     - 聞きたいこと（質問の概要）&#13;

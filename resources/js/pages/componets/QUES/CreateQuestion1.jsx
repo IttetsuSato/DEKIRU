@@ -5,6 +5,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
 function CreateQuestion1(props) {
+
+    const { formData } = props;
     const [localCategory, setLocalCategory] = useState(localStorage.getItem("localCategory"));
     const [categoriesArray, setCategoriesArray] = useState([]);
 
@@ -29,6 +31,7 @@ function CreateQuestion1(props) {
     const handleChange = (event) => {
       setLocalCategory(event.target.value);
       localStorage.setItem('localCategory', event.target.value);
+      formData.category = event.target.value;
     };
 
 
@@ -45,6 +48,7 @@ function CreateQuestion1(props) {
                     label="カテゴリー"
                     defaultValue={localStorage.getItem("localCategory")}
                     onChange={handleChange}
+                    name="category"
                 >
                   {categoriesArray.map((categoryArray, index) => (
                     <MenuItem value={categoryArray.category} key={index}>{categoryArray.category}</MenuItem>

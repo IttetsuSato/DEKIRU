@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid } from '@material-ui/core'
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -11,32 +11,50 @@ import CreateQuestion3 from "./CreateQuestion3";
 //import { KEYS, setItem, getItem, removeItem } from "./LocalStorage";
 import { Link  as LinkRouter } from 'react-router-dom';
 
-function getSteps() {
-    return [
-        'タイトル',
-        '詳細',
-        '確認項目'
-    ];
-}
-
-function getStepContent(stepIndex) {
-    switch (stepIndex) {
-        case 0:
-            return <CreateQuestion1 />;
-        case 1:
-            return <CreateQuestion2 />;
-        case 2:
-            return <CreateQuestion3 />;
-        default:
-            return 'Unknown stepIndex';
-    }
-}
-
 
 function Content() {
-    const steps = getSteps();
-    const [activeStep, setActiveStep] = React.useState(0);
+  const steps = [
+    'タイトル',
+    '詳細',
+    '確認項目'
+  ];
+  const [activeStep, setActiveStep] = useState(0);
+  //フォームの入力値を管理する
+  const [formData, setFormData] = useState({category:'', title:'', content:''});
+  
+  function getStepContent(stepIndex) {
+      switch (stepIndex) {
+          case 0:
+              return <CreateQuestion1 formData={formData} setFormData={setFormData}/>;
+          case 1:
+              return <CreateQuestion2 formData={formData} setFormData={setFormData}/>;
+          case 2:
+              return <CreateQuestion3 formData={formData} setFormData={setFormData}/>;
+          default:
+              return 'Unknown stepIndex';
+      }
+  }
 
+  const createQuestion = async() => {
+    //入力値を投げる
+    await axios
+        .post('/api/questions', {
+            name: formData.name,
+            email: formData.email,
+            password: '12345678',
+  
+        })
+        .then((res) => {
+            const tempUsers = users
+            console.log(res.data);
+            tempUsers.push(res.data);
+            setUsers(tempUsers)
+            setFormData('');
+        })
+        .catch(error => {
+            console.log(error);
+        });
+  }
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         

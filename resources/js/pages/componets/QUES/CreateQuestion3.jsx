@@ -8,21 +8,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-{/*
-function createData(category, title, detail) {
-    return { category, title, detail };
-}
-
-const rows = [
-    createData(storedCategory, storedTiltle, storedDetail)
-];
-
-*/}
 
 function CreateQuestion3(props) {
-    const storedCategory = localStorage.getItem('category')
-    const storedTiltle = localStorage.getItem('title')
-    const storedDetail = localStorage.getItem('detail')
+  const { formData  } = props;
+    const storedLocalCategory = localStorage.getItem('localCategory')
+    const storedLocalTitle = localStorage.getItem('localTitle')
+    const storedLocalDetail = localStorage.getItem('localDetail')
 
     return (
         <Grid container>
@@ -36,18 +27,21 @@ function CreateQuestion3(props) {
                     </TableHead>
                     <TableBody>
                         <TableRow
-                            key={storedCategory}
+                            key={storedLocalCategory}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
-                                {storedCategory}
+                            <TableCell>カテゴリー</TableCell>
+                            <TableCell>
+                                {storedLocalCategory}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell align="right">{storedTiltle}</TableCell>
+                            <TableCell>タイトル</TableCell>
+                            <TableCell align="right">{storedLocalTitle}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell align="right">{storedDetail}</TableCell>
+                            <TableCell>詳細</TableCell>
+                            <TableCell align="right">{storedLocalDetail}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
