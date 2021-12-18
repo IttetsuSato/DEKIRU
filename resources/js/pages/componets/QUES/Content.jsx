@@ -20,39 +20,53 @@ function Content() {
   ];
   const [activeStep, setActiveStep] = useState(0);
   //フォームの入力値を管理する
-  const [formData, setFormData] = useState({category:'', title:'', content:''});
-  
+  const [formData, setFormData] = useState({ category_id: '', category:'', title:'', content:''});
+  const [categoriesArray, setCategoriesArray] = useState(['']);
+
+    
+    useEffect(() => {
+      getCategoryData();
+    },[]);
+    
+    //DBからカテゴリ一覧を取得
+    const getCategoryData = () => {
+      axios
+          .get('/api/categories')
+          .then(response => {
+              setCategoriesArray(response.data);
+              console.log(response.data);
+          })
+          .catch((error) => {
+              console.log('通信エラー: '+ error);
+          });
+    }
   
   //入力がされたら（都度）入力値を変更するためのfunction
   const inputChange = (e) => {
     const key = e.target.name;
     const value = e.target.value;
     formData[key] = value;
+    if(key == 'category_id'){
+      formData.category = categoriesArray[value-1].category;
+      console.log('ok');
+    }
     let data = Object.assign({}, formData);
     setFormData(data);
-    console.log(formData);
   }
   
+  //入力値を投げる
   const createQuestion = async() => {
-    //入力値を投げる
     await axios
-        .post('/api/questions', {
-            name: formData.name,
-            email: formData.email,
-            password: '12345678',
-  
-        })
+        .post('/api/questions', formData)
         .then((res) => {
-            const tempUsers = users
-            console.log(res.data);
-            tempUsers.push(res.data);
-            setUsers(tempUsers)
+            console.log(res);
             setFormData('');
           })
         .catch(error => {
           console.log(error);
         });
       }
+
       const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         
@@ -67,7 +81,7 @@ function Content() {
       function getStepContent(stepIndex) {
           switch (stepIndex) {
               case 0:
-                  return <CreateQuestion1 formData={formData} inputChange={inputChange}/>;
+                  return <CreateQuestion1 formData={formData} inputChange={inputChange} categoriesArray={categoriesArray}/>;
               case 1:
                   return <CreateQuestion2 formData={formData} inputChange={inputChange}/>;
               case 2:
@@ -94,9 +108,12 @@ function Content() {
                 <Button disabled={activeStep === 0} onClick={handleBack}>
                     戻る
                 </Button>
-                <Button variant="contained" color="primary" onClick={handleNext} >
-                    {activeStep === steps.length - 1 ? '送信' : '次へ'}
-                </Button>
+
+                {activeStep === steps.length - 1
+                ?<Button variant="contained" color="primary" onClick={createQuestion} >送信</Button>
+                : <Button variant="contained" color="primary" onClick={handleNext} >次へ</Button>
+                }
+
             </Grid>
         </Grid>
     )

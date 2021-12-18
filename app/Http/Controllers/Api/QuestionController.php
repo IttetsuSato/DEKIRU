@@ -18,8 +18,11 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
       $question = new Question;
-      $question->name = $request->name;
+      $question->user_id = 1;
+      $question->category_id = $request->category_id;
+      $question->title = $request->title;
       $question->content = $request->content;
+      $question->status = 1;
       $question->save();
       return $question;
     }

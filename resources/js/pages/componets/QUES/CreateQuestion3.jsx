@@ -11,9 +11,6 @@ import Paper from '@material-ui/core/Paper';
 
 function CreateQuestion3(props) {
   const { formData, inputChange } = props;
-    // const storedLocalCategory = localStorage.getItem('localCategory')
-    // const storedLocalTitle = localStorage.getItem('localTitle')
-    // const storedLocalDetail = localStorage.getItem('localDetail')
 
     return (
         <Grid container>
