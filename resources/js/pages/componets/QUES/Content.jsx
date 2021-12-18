@@ -22,19 +22,17 @@ function Content() {
   //フォームの入力値を管理する
   const [formData, setFormData] = useState({category:'', title:'', content:''});
   
-  function getStepContent(stepIndex) {
-      switch (stepIndex) {
-          case 0:
-              return <CreateQuestion1 formData={formData} setFormData={setFormData}/>;
-          case 1:
-              return <CreateQuestion2 formData={formData} setFormData={setFormData}/>;
-          case 2:
-              return <CreateQuestion3 formData={formData} setFormData={setFormData}/>;
-          default:
-              return 'Unknown stepIndex';
-      }
+  
+  //入力がされたら（都度）入力値を変更するためのfunction
+  const inputChange = (e) => {
+    const key = e.target.name;
+    const value = e.target.value;
+    formData[key] = value;
+    let data = Object.assign({}, formData);
+    setFormData(data);
+    console.log(formData);
   }
-
+  
   const createQuestion = async() => {
     //入力値を投げる
     await axios
@@ -50,22 +48,34 @@ function Content() {
             tempUsers.push(res.data);
             setUsers(tempUsers)
             setFormData('');
-        })
+          })
         .catch(error => {
-            console.log(error);
+          console.log(error);
         });
-  }
-    const handleNext = () => {
+      }
+      const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         
-    };
-    const handleBack = () => {
+      };
+      const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-    const handleReset = () => {
+      };
+      const handleReset = () => {
         setActiveStep(0);
-    };
-
+      };
+      
+      function getStepContent(stepIndex) {
+          switch (stepIndex) {
+              case 0:
+                  return <CreateQuestion1 formData={formData} inputChange={inputChange}/>;
+              case 1:
+                  return <CreateQuestion2 formData={formData} inputChange={inputChange}/>;
+              case 2:
+                  return <CreateQuestion3 formData={formData} inputChange={inputChange}/>;
+              default:
+                  return 'Unknown stepIndex';
+          }
+      }
 
     return (
         <Grid container>

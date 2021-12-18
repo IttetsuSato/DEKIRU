@@ -6,9 +6,9 @@ import Select from '@mui/material/Select';
 
 function CreateQuestion1(props) {
 
-    const { formData } = props;
-    const [localCategory, setLocalCategory] = useState(localStorage.getItem("localCategory"));
-    const [categoriesArray, setCategoriesArray] = useState([]);
+    const { formData, inputChange } = props;
+    // const [localCategory, setLocalCategory] = useState(localStorage.getItem("localCategory"));
+    const [categoriesArray, setCategoriesArray] = useState(['なし']);
 
     
     useEffect(() => {
@@ -28,15 +28,35 @@ function CreateQuestion1(props) {
           });
     }
 
-    const handleChange = (event) => {
-      setLocalCategory(event.target.value);
-      localStorage.setItem('localCategory', event.target.value);
-      formData.category = event.target.value;
-    };
+    // const handleChange = (event) => {
+    //   setLocalCategory(event.target.value);
+    //   localStorage.setItem('localCategory', event.target.value);
+    //   formData.category = event.target.value;
+    // };
 
 
 
 
+    // return (
+    //     <Grid container>
+    //         <Grid sm={2} />
+    //         <Grid lg={8} sm={8} spacing={10}>
+    //             <InputLabel id="demo-simple-select-label">カテゴリ</InputLabel>
+    //             <Select
+    //                 labelId="demo-simple-select-label"
+    //                 id="demo-simple-select"
+    //                 label="カテゴリー"
+    //                 defaultValue={localStorage.getItem("localCategory")}
+    //                 onChange={handleChange}
+    //                 name="category"
+    //             >
+    //               {categoriesArray.map((categoryArray, index) => (
+    //                 <MenuItem value={categoryArray.category} key={index}>{categoryArray.category}</MenuItem>
+    //               ))}
+    //             </Select>
+    //         </Grid>
+    //     </Grid>
+    // )
     return (
         <Grid container>
             <Grid sm={2} />
@@ -46,8 +66,7 @@ function CreateQuestion1(props) {
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     label="カテゴリー"
-                    defaultValue={localStorage.getItem("localCategory")}
-                    onChange={handleChange}
+                    onChange={inputChange}
                     name="category"
                 >
                   {categoriesArray.map((categoryArray, index) => (

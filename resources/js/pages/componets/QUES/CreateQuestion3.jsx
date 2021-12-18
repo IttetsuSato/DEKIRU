@@ -10,10 +10,10 @@ import Paper from '@material-ui/core/Paper';
 
 
 function CreateQuestion3(props) {
-  const { formData  } = props;
-    const storedLocalCategory = localStorage.getItem('localCategory')
-    const storedLocalTitle = localStorage.getItem('localTitle')
-    const storedLocalDetail = localStorage.getItem('localDetail')
+  const { formData, inputChange } = props;
+    // const storedLocalCategory = localStorage.getItem('localCategory')
+    // const storedLocalTitle = localStorage.getItem('localTitle')
+    // const storedLocalDetail = localStorage.getItem('localDetail')
 
     return (
         <Grid container>
@@ -27,21 +27,21 @@ function CreateQuestion3(props) {
                     </TableHead>
                     <TableBody>
                         <TableRow
-                            key={storedLocalCategory}
+                            key={formData.category}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell>カテゴリー</TableCell>
                             <TableCell>
-                                {storedLocalCategory}
+                                {formData.category}
                             </TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>タイトル</TableCell>
-                            <TableCell align="right">{storedLocalTitle}</TableCell>
+                            <TableCell align="right">{formData.title}</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>詳細</TableCell>
-                            <TableCell align="right">{storedLocalDetail}</TableCell>
+                            <TableCell align="right">{formData.content}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
