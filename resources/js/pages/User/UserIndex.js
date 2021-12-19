@@ -64,11 +64,9 @@ function UserIndex() {
             name: formData.name,
             email: formData.email,
             password: '12345678',
-
         })
         .then((res) => {
             const tempUsers = users
-            console.log(res.data);
             tempUsers.push(res.data);
             setUsers(tempUsers)
             setFormData('');

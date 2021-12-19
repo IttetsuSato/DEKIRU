@@ -43,7 +43,7 @@ export default function QuestionSearch() {
     // タスク
     const [tasks, setTasks] = useState(initialState.tasks);
     // カテゴリー
-    const [categories, setCategories] = useState(initialState.categories);
+    const [categories, setCategories] = useState([]);
     // 検索条件
     const [filterQuery, setFilterQuery] = useState({});
     // ソート条件
@@ -57,6 +57,7 @@ export default function QuestionSearch() {
 
     useEffect(() => {
       getQuestionsData();
+      getCategoriesData();
     },[])
   
     //一覧情報を取得しステートquestionsにセットする
@@ -65,7 +66,17 @@ export default function QuestionSearch() {
           .get('/api/questions')
           .then(response => {
               setQuestions(response.data);
-              console.log(response.data);
+          })
+          .catch(() => {
+              console.log('通信に失敗しました');
+          });
+    }
+
+    const getCategoriesData = () => {
+      axios
+          .get('/api/categories')
+          .then(response => {
+              setCategories(response.data);
           })
           .catch(() => {
               console.log('通信に失敗しました');
@@ -168,13 +179,14 @@ export default function QuestionSearch() {
                             onChange={handleFilter}
                         >
                             <MenuItem value="">　</MenuItem>
+
                             {
-                                categories.map((item) => {
+                                categories.map((category) => {
                                     return (
                                         <MenuItem
-                                            key={item.id}
-                                            value={item.id}>
-                                            {item.title}
+                                            key={category.id}
+                                            value={category.id}>
+                                            {category.category}
                                         </MenuItem>
                                     );
                                 })

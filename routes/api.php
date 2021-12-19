@@ -32,6 +32,7 @@ Route::group(['middleware' => 'api'], function(){
   Route::resource('movies', MovieController::class, ['except' => ['create', 'edit']]);
   Route::resource('questions', QuestionController::class, ['except' => ['create', 'edit']]);
   Route::resource('values', ValueController::class, ['except' => ['create', 'edit']]);
+  
   Route::get('posts', 'App\Http\Controllers\Api\PostController@index');
   Route::post('post/create', 'App\Http\Controllers\Api\PostController@create');
   Route::post('edit', 'App\Http\Controllers\Api\PostController@edit');
