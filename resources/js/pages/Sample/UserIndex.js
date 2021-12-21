@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button, Card } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import MainTable from '../../components/MainTable';
-import UserCreateForm from './UserCreateForm';
+import UserCreateForm from './components/UserCreateForm';
 
 
 //スタイルの定義

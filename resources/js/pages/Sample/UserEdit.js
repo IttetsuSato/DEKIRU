@@ -80,4 +80,4 @@ function UserEdit() {
   );
 }
 
-export default PostEdit;
+export default UserEdit;

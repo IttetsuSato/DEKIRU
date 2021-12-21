@@ -67,8 +67,15 @@ function Content() {
       }
 
       const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        
+        if(activeStep == 0){
+          if(formData.category_id){
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          }
+        }else if(activeStep == 1){
+          if(formData.title && formData.content){
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          }
+        }
       };
       const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
