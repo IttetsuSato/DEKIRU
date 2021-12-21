@@ -55,11 +55,16 @@ function Content() {
   
   //入力値を投げる
   const createQuestion = async() => {
+    if(formData == ''){
+      return;
+    }
     await axios
         .post('/api/questions', formData)
         .then((res) => {
             console.log(res);
             setFormData('');
+            alert('質問を投稿しました！');
+            handleReset();
           })
         .catch(error => {
           console.log(error);
