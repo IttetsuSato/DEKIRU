@@ -11,6 +11,7 @@ import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+import ChatIcon from '@mui/icons-material/Chat';
 
 function Skyway(){
   const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
@@ -19,6 +20,7 @@ function Skyway(){
   const [isConnected, setIsConnected] = useState(false); //false: 接続なし, true: 通話中
   const [isMuted, setIsMuted] = useState(true); //false: ミュート
   const [isOffScreen, setIsOffScreen] = useState(true); //false: 画面オフ
+  const [isChat, setIsChat] = useState(false); //false: チャットオフ
   const localVideoRef = useRef(null);
 
   
@@ -160,15 +162,26 @@ function Skyway(){
           {castVideo()}
         </Box>
         {/* チャット */}
-        <Box sx={{width: '25%', 'backgroundColor': 'rgba(255,255,255,0.96)', height: '100vh', position: 'absolute', top: 0, right: 0, zIndex: 'modal', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-          {/* <Box id="messages" sx={{height: '100%'}}></Box> */}
-          <pre className="messages" id="messages"></pre>
-          <Box sx={{ display: 'flex'}}>
-              <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
-              <Button id="send-trigger" color="primary" variant="contained" startIcon={<SendIcon />}></Button>
+        {isChat &&
+          <Box sx={{width: '25%', 'backgroundColor': 'rgba(255,255,255,0.96)', height: '100vh', position: 'absolute', top: 0, right: 0, zIndex: 'modal', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+            {/* <Box id="messages" sx={{height: '100%'}}></Box> */}
+            <pre className="messages" id="messages"></pre>
+            <Box sx={{ display: 'flex'}}>
+                <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
+                <Button id="send-trigger" color="primary" variant="contained"><SendIcon /></Button>
+            </Box>
           </Box>
-        </Box>
+        }
         {/* 操作バー */}
+        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0 }}>
+          <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+          <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
+          <Button color="primary" variant="contained" onClick={() => {setIsMuted(prev => !prev); changeStream()}}>{isMuted ? <MicIcon /> : <MicOffIcon />}</Button>
+          <Button color="primary" variant="contained" onClick={() => {setIsOffScreen(prev => !prev); changeStream()}}>{isOffScreen ? <VideocamIcon /> : <VideocamOffIcon />}</Button>
+          <Button color="primary" variant="contained" onClick={() => {setIsChat(prev => !prev);}}><ChatIcon /></Button>
+        </Box>
+
+        {/* 自分の映像 */}
         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
           <Box sx={{ width: '25%' }}>
             <video
@@ -177,10 +190,6 @@ function Skyway(){
             style={{transform: 'scale(-1,1)'}}
             playsInline autoPlay muted></video>
           </Box>
-          <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
-          <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
-          <Button color="primary" variant="contained" onClick={() => {setIsMuted(prev => !prev); changeStream()}}>{isMuted ? <MicIcon /> : <MicOffIcon />}</Button>
-          <Button color="primary" variant="contained" onClick={() => {setIsOffScreen(prev => !prev); changeStream()}}>{isOffScreen ? <VideocamIcon /> : <VideocamOffIcon />}</Button>
         </Box>
       </Box>
     </div>

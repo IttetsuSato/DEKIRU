@@ -66,6 +66,7 @@ export default function QuestionSearch() {
           .get('/api/questions')
           .then(response => {
               setQuestions(response.data);
+              console.log(response.data);
           })
           .catch(() => {
               console.log('通信に失敗しました');
@@ -178,7 +179,6 @@ export default function QuestionSearch() {
                             value={filterQuery.category_id}
                             onChange={handleFilter}
                         >
-                            <MenuItem value="">　</MenuItem>
 
                             {
                                 categories.map((category) => {
