@@ -55,11 +55,16 @@ function Content() {
   
   //入力値を投げる
   const createQuestion = async() => {
+    if(formData == ''){
+      return;
+    }
     await axios
         .post('/api/questions', formData)
         .then((res) => {
             console.log(res);
             setFormData('');
+            alert('質問を投稿しました！');
+            handleReset();
           })
         .catch(error => {
           console.log(error);
@@ -67,8 +72,15 @@ function Content() {
       }
 
       const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        
+        if(activeStep == 0){
+          if(formData.category_id){
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          }
+        }else if(activeStep == 1){
+          if(formData.title && formData.content){
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          }
+        }
       };
       const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);

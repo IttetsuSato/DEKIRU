@@ -17,35 +17,35 @@ import Setting from './pages/componets/USERS/setting';
 import QuestionPage from './pages/componets/QUES/QuestionPage';
 import PostEdit from './pages/PostEdit';
 import Skyway from './pages/Skyway';
-import UserIndex from './pages/User/UserIndex';
+import UserIndex from './pages/Sample/UserIndex';
 
 export default function Top() {
-    const [value, setValue] = useState("")
+    const [value, setValue] = useState("");
+    const [useHeader, setUseHeader] = useState(true);
 
     return (
         <Grid container direction="column">
-            <Header setValue={setValue} />
+          { useHeader && <Header setValue={setValue} /> }
             { value == "Mypage" ?
             <Mypage />
             : value == "notific" ?
                 <Notific />
                 : value == "setting" ?
                     <Setting />
-                    : <div>
-                        <Switch>
-                            <Route exact path="/" component={login} />
-                            <Route exact path="/componets/SignUp" component={SignUp} />
-                            <Route exact path="/componets/TopBar" component={TopBar} />
-                            <Route exact path={"/componets/TopBar/QuettionPage"} component={QuestionPage} />
-                            <Route exact path={"/componets/TopBar/QuestionList"} component={QuestionList} />
-                            <Route exact path={"/componets/TopBar/Mypage"} component={Mypage} />
-                            <Route exact path={"/componets/TopBar/Question/Detail"} component={BasicDetail} />
-                            <Route exact path={"/componets/TopBar/Question/Detail/Confirm"} component={Confirm} />
-                            <Route path='/users' exact component={UserIndex} />
-                            <Route path='/post/edit/:id' exact component={PostEdit} />
-                            <Route path='/skyway' exact component={Skyway} />
-                        </Switch>
-                    </div>
+                    : 
+                      <Switch>
+                          <Route exact path="/" component={login} />
+                          <Route exact path="/componets/SignUp" component={SignUp} />
+                          <Route exact path="/componets/TopBar" component={TopBar} />
+                          <Route exact path={"/componets/TopBar/QuettionPage"} component={QuestionPage} />
+                          <Route exact path={"/componets/TopBar/QuestionList"} component={QuestionList} />
+                          <Route exact path={"/componets/TopBar/Mypage"} component={Mypage} />
+                          <Route exact path={"/componets/TopBar/Question/Detail"} component={BasicDetail} />
+                          <Route exact path={"/componets/TopBar/Question/Detail/Confirm"} component={Confirm} />
+                          <Route path='/sample' exact component={UserIndex} />
+                          <Route path='/post/edit/:id' exact component={PostEdit} />
+                          <Route path='/skyway' exact component={Skyway} />
+                      </Switch>
             }
             <Copyright sx={{ mt: 5 }} />
         </Grid>

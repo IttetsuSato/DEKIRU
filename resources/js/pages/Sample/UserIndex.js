@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button, Card } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import MainTable from '../../components/MainTable';
-import UserCreateForm from './UserCreateForm';
+import UserCreateForm from './components/UserCreateForm';
 
 
 //スタイルの定義
@@ -64,11 +64,9 @@ function UserIndex() {
             name: formData.name,
             email: formData.email,
             password: '12345678',
-
         })
         .then((res) => {
             const tempUsers = users
-            console.log(res.data);
             tempUsers.push(res.data);
             setUsers(tempUsers)
             setFormData('');

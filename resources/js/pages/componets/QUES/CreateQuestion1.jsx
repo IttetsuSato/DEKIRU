@@ -19,6 +19,7 @@ function CreateQuestion1(props) {
                     label="カテゴリー"
                     onChange={inputChange}
                     name="category_id"
+                    defaultValue={formData.category_id}
                 >
                   {categoriesArray.map((categoryArray,index) => (
                     <MenuItem value={categoryArray.id} key={index}>{categoryArray.category}</MenuItem>

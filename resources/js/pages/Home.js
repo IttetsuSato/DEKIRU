@@ -93,7 +93,7 @@ function Home() {
                 <div className="col-md-10">
                     <div className="card">
                         <h1>タスク管理</h1>
-
+                        
                         <Card className={classes.card}>
                             <PostForm data={formData} btnFunc={createPost} inputChange={inputChange}/>
                         </Card>
