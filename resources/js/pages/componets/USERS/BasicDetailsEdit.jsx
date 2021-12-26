@@ -17,17 +17,16 @@ function BasicDetailsEdit(props) {
 
     //入力値を投げる
     const EditBasicDetails = async(id) => {
+      console.log(user);
         await axios
             .put('/api/users/'+ id, user)
             .then((res) => {
                 console.log(res);
-                setformData('');
               })
             .catch(error => {
               console.log(error);
             });
           }
-
 
       return (
         <Box sx={{ flexGrow: 20 }}>
@@ -48,7 +47,7 @@ function BasicDetailsEdit(props) {
                 </Grid>
 
                 <Grid item xs={1}>
-                    <Button variant="contained" color="primary" onClick={EditBasicDetails} >保存</Button>
+                    <Button variant="contained" color="primary" onClick={()=>{EditBasicDetails(user.id)}} >保存</Button>
                 </Grid>
                 <Grid item xs={8}>
                 </Grid>
