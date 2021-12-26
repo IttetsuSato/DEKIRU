@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -7,10 +7,11 @@ import Box from '@mui/material/Box';
 import BasicDetail from './BasicDetail';
 import UserAchievement from './UserAchievement';
 import UserSkill from './UserSkill';
+import BasicDetailsEdit from './BasicDetailsEdit';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
+ 
   return (
     <div
       role="tabpanel"
@@ -20,7 +21,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 4 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -43,6 +44,25 @@ function a11yProps(index) {
 
 export default function Mypage() {
   const [value, setValue] = React.useState(0);
+  const [user, setUser] = useState([]);
+  const id = 1;
+
+    //一覧情報を取得しステートquestionsにセットする
+    const getUserData = (id) => {
+      axios
+      .get('/api/users/' + id)
+          .then(response => {
+              setUser(response.data);
+              console.log(response.data);
+          })
+          .catch(() => {
+              console.log('通信に失敗しました');
+          });
+    }
+
+    useEffect(() => {
+      getUserData(id);
+  },[])
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -55,6 +75,7 @@ export default function Mypage() {
           <Tab label="基本情報" {...a11yProps(0)} />
           <Tab label="実績" {...a11yProps(1)} />
           <Tab label="スキル" {...a11yProps(2)} />
+          <Tab label="test" {...a11yProps(3)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -65,6 +86,9 @@ export default function Mypage() {
       </TabPanel>
       <TabPanel value={value} index={2}>
         <UserSkill />
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        <BasicDetailsEdit user={user}/>
       </TabPanel>
     </Box>
   );
