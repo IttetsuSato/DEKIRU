@@ -16,7 +16,7 @@ import Notific from './pages/componets/USERS/notific';
 import Setting from './pages/componets/USERS/setting';
 import QuestionPage from './pages/componets/QUES/QuestionPage';
 import PostEdit from './pages/PostEdit';
-import Skyway from './pages/Skyway';
+import Skyway from './pages/skyway/Skyway';
 import UserIndex from './pages/Sample/UserIndex';
 import BasicDetailsEdit from './pages/componets/USERS/BasicDetailsEdit';
 

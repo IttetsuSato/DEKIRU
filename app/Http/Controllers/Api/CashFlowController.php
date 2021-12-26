@@ -38,7 +38,8 @@ class CashFlowController extends Controller
      */
     public function show($id)
     {
-        //
+        $Cashflow = CashFlow::find($id);
+        return $Cashflow;
     }
 
     /**

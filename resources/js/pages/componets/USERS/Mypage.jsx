@@ -74,7 +74,7 @@ export default function Mypage() {
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="基本情報" {...a11yProps(0)} />
           <Tab label="実績" {...a11yProps(1)} />
-          <Tab label="スキル" {...a11yProps(2)} />
+          <Tab label="アンケート結果確認" {...a11yProps(2)} />
           <Tab label="test" {...a11yProps(3)} />
         </Tabs>
       </Box>
