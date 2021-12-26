@@ -7,6 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import Grid from '@mui/material/Grid';
+
 
 const columns = [
   { id: 'Name', label: '名前', minWidth: 170 },
@@ -84,6 +86,7 @@ export default function UserAchivMoney() {
               ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

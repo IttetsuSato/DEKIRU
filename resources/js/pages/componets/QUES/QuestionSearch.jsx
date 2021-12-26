@@ -11,37 +11,37 @@ import QuestionList from './QuestionList';
 
 
 export default function QuestionSearch() {
-    const initialState = {
-        tasks: [
-            {
-                id: 1,
-                title: '最初のタスク',
-                category: 1,
-                question: '子供が泣いてどうしよう'
-            }, {
-                id: 2,
-                title: '2番目のタスク',
-                category: 2,
-                question: '高齢者が急に嘔吐してどうしよう'
-            }, {
-                id: 3,
-                title: '3番目のタスク',
-                category: 1,
-                question: '子供が４０度の熱を出してしまって。。。どうすれば良いでしょうか'
-            }
-        ],
-        categories: [
-            {
-                id: 1,
-                title: 'カテゴリー1'
-            }, {
-                id: 2,
-                title: 'カテゴリー2'
-            }
-        ]
-    };
-    // タスク
-    const [tasks, setTasks] = useState(initialState.tasks);
+    // const initialState = {
+    //     questionss: [
+    //         {
+    //             id: 1,
+    //             title: '最初のタスク',
+    //             category: 1,
+    //             question: '子供が泣いてどうしよう'
+    //         }, {
+    //             id: 2,
+    //             title: '2番目のタスク',
+    //             category: 2,
+    //             question: '高齢者が急に嘔吐してどうしよう'
+    //         }, {
+    //             id: 3,
+    //             title: '3番目のタスク',
+    //             category: 1,
+    //             question: '子供が４０度の熱を出してしまって。。。どうすれば良いでしょうか'
+    //         }
+    //     ],
+    //     categories: [
+    //         {
+    //             id: 1,
+    //             title: 'カテゴリー1'
+    //         }, {
+    //             id: 2,
+    //             title: 'カテゴリー2'
+    //         }
+    //     ]
+    // };
+    // // タスク
+    // const [questionss, setquestionss] = useState(initialState.questionss);
     // カテゴリー
     const [categories, setCategories] = useState([]);
     // 検索条件
@@ -72,7 +72,6 @@ export default function QuestionSearch() {
               console.log('通信に失敗しました');
           });
     }
-
     const getCategoriesData = () => {
       axios
           .get('/api/categories')
@@ -92,7 +91,7 @@ export default function QuestionSearch() {
         const filterQuestion = filterQuery.question && filterQuery.question.toLowerCase();
 
         // 絞り込み検索
-        tmpTasks = tmpTasks.filter(row => {
+        tmpQuestions = tmpQuestions.filter(row => {
 
             // タイトルで絞り込み
             if (
@@ -120,15 +119,15 @@ export default function QuestionSearch() {
 
         // ソート
         if (sort.key) {
-            tmpTasks = tmpTasks.sort((a, b) => {
+            tmpQuestions = tmpQuestions.sort((a, b) => {
                 a = a[sort.key];
                 b = b[sort.key];
                 return (a === b ? 0 : a > b ? 1 : -1) * sort.order;
             });
         }
 
-        return tmpTasks;
-    }, [filterQuery, sort, tasks]);
+        return tmpQuestions;
+    }, [filterQuery, sort, questions]);
     // 入力した情報をfilterQueryに入れる
     const handleFilter = e => {
         const { name, value } = e.target;
@@ -206,25 +205,25 @@ export default function QuestionSearch() {
                 </thead> */}
                 <tbody>
                     {
-                        questions.map((question) => {
+                        questions.map((questions) => {
                             return (
-                                <tr key={question.id}>
+                                <tr key={questions.id}>
                                     <td>
-                                        <QuestionList question ={question} />
+                                        <QuestionList question ={questions} />
                                     </td>
                                 </tr>
                             );
                         })
-                        // filteredTask.map((task) => {
-                        //     return (
-                        //         <tr key={task.id}>
-                        //             <td>
-                        //                 <QuestionList Category_id ={task.category}  Title = {task.title} Question={task.question} />
-                        //             </td>
-                        //         </tr>
-                        //     );
-                        // })
-                    }
+                    //     filteredQuestion.map((questions) => {
+                    //         return (
+                    //             <tr key={questions.id}>
+                    //                 <td>
+                    //                     <QuestionList Category_id ={questions.category}  Title = {questions.title} Question={questions.question} />
+                    //                 </td>
+                    //             </tr>
+                    //          );
+                    //      })
+                     }
                 </tbody>
             </table>
 
