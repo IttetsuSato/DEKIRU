@@ -33,7 +33,13 @@ class BasicDetailsEditController extends Controller
     {
       $users = BasicDetails::find($request->id);
       $users->user_name = $request->user_name;
-      $users->name = $request->name;
+      $users->first_name = $request->first_name;
+      $users->last_name = $request->last_name;
+      $users->birthday = $request->birthday;
+      $users->sex = $request->sex;
+      $users->ages = $request->ages;
+      $users->email = $request->email;
+      $users->address = $request->address;
        $users->update();
        $users = BasicDetails::all();
       return redirect("api/users/".$id);
