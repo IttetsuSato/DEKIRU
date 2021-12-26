@@ -10,12 +10,14 @@ import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import BasicDetailsEdit from './BasicDetailsEdit';
+import { Link as LinkRouter } from 'react-router-dom';
 
 export default function BasicDetail() {
     //星の設定部分
     const [userValue, setValue] = React.useState(2.5);
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState('');
     const id = 1;
+
     //ユーザ情報を取得しステートuserにセットする
     const getUserData = (id) => {
         axios
@@ -42,8 +44,8 @@ export default function BasicDetail() {
                 </Grid>
 
                 <Grid item xs={1}>
-                <Button variant="contained" color="primary" >編集
-                </Button>
+                <Button size="small" color="primary" component={LinkRouter} to="/componets/TopBar/BasicDetailsEdit" >編集</Button>
+               
 
                 </Grid>
                 <Grid item xs={12}>

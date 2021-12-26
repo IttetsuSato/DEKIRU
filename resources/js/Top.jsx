@@ -18,6 +18,7 @@ import QuestionPage from './pages/componets/QUES/QuestionPage';
 import PostEdit from './pages/PostEdit';
 import Skyway from './pages/Skyway';
 import UserIndex from './pages/Sample/UserIndex';
+import BasicDetailsEdit from './pages/componets/USERS/BasicDetailsEdit';
 
 export default function Top() {
     const [value, setValue] = useState("");
@@ -42,6 +43,8 @@ export default function Top() {
                           <Route exact path={"/componets/TopBar/Mypage"} component={Mypage} />
                           <Route exact path={"/componets/TopBar/Question/Detail"} component={BasicDetail} />
                           <Route exact path={"/componets/TopBar/Question/Detail/Confirm"} component={Confirm} />
+                          <Route exact path={"/componets/TopBar/BasicDetailsEdit"} component={BasicDetailsEdit} />
+
                           <Route path='/sample' exact component={UserIndex} />
                           <Route path='/post/edit/:id' exact component={PostEdit} />
                           <Route path='/skyway' exact component={Skyway} />
