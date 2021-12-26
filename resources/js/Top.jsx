@@ -27,15 +27,14 @@ export default function Top() {
     return (
         <Grid container direction="column">
           { useHeader && <Header setValue={setValue} /> }
-            { value == "Mypage" ?
-            <Mypage />
-            : value == "notific" ?
+            { value == "notific" ?
                 <Notific />
                 : value == "setting" ?
                     <Setting />
                     : 
                       <Switch>
                           <Route exact path="/" component={login} />
+                          <Route exact path="/myPage" component={Mypage} />
                           <Route exact path="/componets/SignUp" component={SignUp} />
                           <Route exact path="/componets/TopBar" component={TopBar} />
                           <Route exact path={"/componets/TopBar/QuettionPage"} component={QuestionPage} />

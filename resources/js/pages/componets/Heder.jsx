@@ -7,9 +7,9 @@ import { Link  as LinkRouter } from 'react-router-dom';
 import Button from '@mui/material/Button';
 
 const Header = (props) => {
-  function OnClickMypage(){
-    props.setValue("Mypage")
-  }
+  // function OnClickMypage(){
+  //   props.setValue("Mypage")
+  // }
   function OnClicNotific(){
     props.setValue("notific")
   }
@@ -24,7 +24,7 @@ const Header = (props) => {
         <div style={{ flexGrow: 1 }}></div>
         <div>
         <Button onClick={() => OnClicNotific()}><NotificationsIcon /></Button>
-          <Button onClick={() => OnClickMypage()}><PersonIcon /></Button>
+        <Button size="small" color="primary" component={LinkRouter} to="/myPage" ><PersonIcon /></Button>
           <Button onClick={() => OnClickSetting()}><SettingsIcon /></Button>
         </div>
       </Toolbar>
