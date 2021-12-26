@@ -26,6 +26,7 @@ function Content() {
     
     useEffect(() => {
       getCategoryData();
+      showUserData(1);
     },[]);
     
     //DBからカテゴリ一覧を取得
@@ -34,6 +35,17 @@ function Content() {
           .get('/api/categories')
           .then(response => {
               setCategoriesArray(response.data);
+          })
+          .catch((error) => {
+              console.log('通信エラー: '+ error);
+              
+          });
+    }
+    const showUserData = (id) => {
+      axios
+          .get('/api/users/' + id)
+          .then(response => {
+              console.log(response.data);
           })
           .catch((error) => {
               console.log('通信エラー: '+ error);
@@ -61,7 +73,6 @@ function Content() {
     await axios
         .post('/api/questions', formData)
         .then((res) => {
-            console.log(res);
             setFormData('');
             alert('質問を投稿しました！');
             handleReset();
