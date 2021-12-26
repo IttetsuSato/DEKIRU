@@ -9,16 +9,17 @@ import Grid from '@mui/material/Grid';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import BasicDetailsEdit from './BasicDetailsEdit';
 
 export default function BasicDetail() {
     //星の設定部分
     const [userValue, setValue] = React.useState(2.5);
     const [user, setUser] = useState([]);
-    const id =1;
+    const id = 1;
     //ユーザ情報を取得しステートuserにセットする
     const getUserData = (id) => {
         axios
-            .get('/api/users/' + '1')
+            .get('/api/users/' + id)
             .then(response => {
                 setUser(response.data);
                 console.log(response.data);
@@ -41,9 +42,12 @@ export default function BasicDetail() {
                 </Grid>
 
                 <Grid item xs={1}>
-                    <Button size="large" >変更</Button>
+                <Button variant="contained" color="primary" >編集
+                </Button>
+
                 </Grid>
                 <Grid item xs={12}>
+                    ハンドルネーム：
                     <label id="outlined-basic" variant="outlined" value="name" >
                         {user.name}
                     </label>
@@ -64,12 +68,47 @@ export default function BasicDetail() {
                     </Link>
                 </Grid>
 
-
+                <Grid item xs={12}> 
+                    名前：
+                    <label id="name" variant="outlined" value="name" >
+                        {user.first_name + " " + user.last_name}
+                    </label>                  
+                </Grid>
+                <Grid item xs={12}> 
+                    生年月日：
+                    <label id="birthday" variant="outlined" value="birthday" >
+                        {user.birthday}
+                    </label>                  
+                </Grid>
+                <Grid item xs={12}> 
+                    性別：
+                    <label id="sex" variant="outlined" value="sex" >
+                        {user.sex}
+                    </label>                    
+                </Grid>
                 <Grid item xs={12}>
-                    <TextField id="outlined-basic" label="名前" variant="outlined" value="山中大輔" />
+                    年齢：
+                    <label id="ages" variant="outlined" value="ages" >
+                        {user.ages}
+                    </label>                     
                 </Grid>
                 <Grid item xs={8}>
-                    <TextField id="outlined-basic" label="メールアドレス" variant="outlined" value="aaaa@gmiail.com" />
+                    メールアドレス：
+                    <label id="email" variant="outlined" value="email" >
+                        {user.email}
+                    </label>   
+                </Grid>
+                <Grid item xs={8}>
+                    住所：
+                    <label id="address" variant="outlined" value="address" >
+                        {user.address}
+                    </label>   
+                </Grid>
+                <Grid item xs={8}>
+                    登録日：
+                    <label id="created_at" variant="outlined" value="created_at" >
+                        {user.created_at}
+                    </label>  
                 </Grid>
                 <Grid item xs={1}>
                     <Button size="large">編集</Button>

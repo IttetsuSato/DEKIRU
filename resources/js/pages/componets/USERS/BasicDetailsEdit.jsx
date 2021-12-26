@@ -38,14 +38,29 @@ function BasicDetailsEdit(props) {
                 </Grid>
     
                 <Grid item xs={12}>
-                <TextField name="user_name" label="ハンドルネーム" variant="outlined" value={user.user_name} />
-    
+                <TextField name="user_name" label="ハンドルネーム" variant="outlined" defaultValue={user.user_name} />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="name" label="名前" variant="outlined" value={user.name} /> 
-
+                  <TextField id="first_name" label="名前(姓)" variant="outlined" defaultValue={user.first_name} /> 
                 </Grid>
-
+                <Grid item xs={12}>
+                  <TextField id="last_name" label="名前(名)" variant="outlined" defaultValue={user.last_name} /> 
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField id="birthday" label="生年月日" variant="outlined" defaultValue={user.birthday} /> 
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField id="sex" label="性別" variant="outlined" defaultValue={user.sex} /> 
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField id="ages" label="年齢" variant="outlined" defaultValue={user.ages} /> 
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField id="email" label="メールアドレス" variant="outlined" defaultValue={user.email} /> 
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField id="address" label="住所" variant="outlined" defaultValue={user.address} /> 
+                </Grid>
                 <Grid item xs={1}>
                     <Button variant="contained" color="primary" onClick={()=>{EditBasicDetails(user.id)}} >保存</Button>
                 </Grid>
