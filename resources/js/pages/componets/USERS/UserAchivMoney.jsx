@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -64,6 +64,16 @@ export default function UserAchivMoney() {
     setPage(0);
   };
 
+  const getCashFlowData = () => {
+    axios
+        .get('/api/categories')
+        .then(response => {
+            setCategories(response.data);
+        })
+        .catch(() => {
+            console.log('通信に失敗しました');
+        });
+  }
   return (
     <Paper sx={{ width: '50%' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
