@@ -72,20 +72,19 @@ export default function QuestionSearch() {
               console.log('通信に失敗しました');
           });
     }
-//カテゴリー情報を取得しステートcategoriesにセットする
-const getCategoriesData = () => {
-    axios
-        .get('/api/categories')
-        .then(response => {
-            setCategories(response.data);
-            console.log(response.data);
-        })
-        .catch(() => {
-            console.log('通信に失敗しました');
-        });
-  }
-    const filteredQuestion = useMemo(() => {
-        let tmpQuestions = questions;
+    const getCategoriesData = () => {
+      axios
+          .get('/api/categories')
+          .then(response => {
+              setCategories(response.data);
+          })
+          .catch(() => {
+              console.log('通信に失敗しました');
+          });
+    }
+
+    const filteredTask = useMemo(() => {
+        let tmpTasks = tasks;
 
         // 入力した文字は小文字にする
         const filterTitle = filterQuery.title && filterQuery.title.toLowerCase();
@@ -179,14 +178,14 @@ const getCategoriesData = () => {
                             value={filterQuery.category_id}
                             onChange={handleFilter}
                         >
-                            <MenuItem value="">　</MenuItem>
+
                             {
-                                categories.map((categories) => {
+                                categories.map((category) => {
                                     return (
                                         <MenuItem
-                                            key={categories.id}
-                                            value={categories.id}>
-                                            {categories.category}
+                                            key={category.id}
+                                            value={category.id}>
+                                            {category.category}
                                         </MenuItem>
                                     );
                                 })
