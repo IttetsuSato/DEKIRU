@@ -12,6 +12,7 @@ import {
 import Button from '@mui/material/Button';
 import { Link as LinkRouter } from 'react-router-dom';
 import UserAchivMoney from "./UserAchivMoney";
+import TextField from '@mui/material/TextField';
 
 const PieChartData = [
     { name: "Group A", value: 0 },
@@ -37,6 +38,14 @@ export default function UserAchievement(props) {
 
     return (
         <>
+            <Grid item lg={3} md={4} sm={2} xs={2} sx={{ flexGrow: 1 }}>
+                <Grid item xs={12}>
+                    <TextField id="outlined-basic" label="キャッシュ" variant="outlined" value="¥100,000" />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField id="outlined-basic" label="報酬ポイント" variant="outlined" value="100,000p" />
+                </Grid>
+            </Grid>
             <Grid item lg={3} md={4} sm={2} xs={2} sx={{ flexGrow: 1 }}>
                 <Grid container spacing={4}>
                     <Grid item xs={4}>
@@ -75,13 +84,10 @@ export default function UserAchievement(props) {
                         総勤務時間
                     </Grid>
                     <Grid item xs={4}>
-                    &nbsp;good率
+                        &nbsp;good率
                     </Grid>
                 </Grid>
             </Grid>
-            <Button size="small" >支払調書（源泉徴収）     ＞
-            </Button>
-
             <UserAchivMoney />
         </>
     );
