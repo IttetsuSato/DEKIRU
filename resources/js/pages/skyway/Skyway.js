@@ -18,7 +18,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 
 function Skyway(){
   const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
-  const [roonData, setRoonData] = useState({roon: null, messages: ''});
+  const [roomData, setRoomData] = useState({room: null, messages: ''});
   const [localStream, setLocalStream] = useState('');
   const [remoteVideo, setRemoteVideo] = useState([]);
   const [messages, setMessages] = useState(''); //チャットメッセージ
@@ -62,28 +62,20 @@ function Skyway(){
         mode: 'sfu',
         stream: localStream,
       });
-      roonData.roon = room;
-      let data = Object.assign({}, roonData);
-      setRoonData(data);
+      roomData.room = room;
+      let data = Object.assign({}, roomData);
+      setRoomData(data);
       setEventListener(room);
 
     }
   }
 
   const addMessages = (text) => {
-    roonData.messages += (text+ '\n');
-    let data = Object.assign({}, roonData);
-    setRoonData(data);
+    roomData.messages += (text+ '\n');
+    let data = Object.assign({}, roomData);
+    setRoomData(data);
   }
 
-
-  // if(roon){
-  //   //peerJoin: 誰かがroomに参加したときに発火
-  //   roon.on("peerJoin", (peerId) => {
-  //     setMessages(messages + `=== ${peerId} が参加しました ===\n`);
-  //   });
-  // }
-    
   const setEventListener = (room) => {
     const leaveTrigger = document.getElementById('leave-trigger');
     const sendTrigger = document.getElementById('send-trigger');
@@ -91,17 +83,13 @@ function Skyway(){
     
     //open: SkyWayサーバーとの接続が成功したタイミングで発火
     room.once("open", () => {
-      setMessages(messages + '=== ルームに参加しました ===\n');
-      addMessages('=== ルームに参加しました ===\n');
-      messages += '=== ルームに参加しました ===\n';
+      addMessages('=== ルームに参加しました ===');
       setIsConnected(true);
     });
 
     //peerJoin: 誰かがroomに参加したときに発火
     room.on("peerJoin", (peerId) => {
-      setMessages(messages + `=== ${peerId} が参加しました ===\n`);
-      addMessages(`=== ${peerId} が参加しました ===\n`);
-      messages += `=== ${peerId} が参加しました ===\n`;
+      addMessages(`=== ${peerId} が参加しました ===`);
     });
 
     //stream: 相手の映像の情報
@@ -114,11 +102,7 @@ function Skyway(){
 
     //data: チャット受信
     room.on("data", ({data, src}) => {
-
-      setMessages(messages + `${src}: ${data}\n`);
-      addMessages(`${src}: ${data}\n`);
-      messages += `${src}: ${data}\n`;
-      // messages.textContent += `${src}: ${data}\n`;
+      addMessages(`${src}: ${data}`);
     })
     
     //peerLeave: 誰かがroomから退室したときに発火
@@ -131,15 +115,13 @@ function Skyway(){
           return video.peerId !== peerId;
         })
       );
-      setMessages(messages + `=== ${peerId} が退室しました ===\n`);
-        // messages.textContent += `=== ${peerId} が退室しました ===\n`;
+      addMessages(`=== ${peerId} が退室しました ===`);
     });
 
     //close: 自身が退室したときに発火
     room.once('close', () => {
       sendTrigger.removeEventListener('click', onClickSend);
-      setMessages(messages + '== ルームから退室しました ===\n');
-      // messages.textContent += '== ルームから退室しました ===\n';
+      addMessages('== ルームから退室しました ===');
       setRemoteVideo(
         remoteVideo.filter((video) => {
           video.stream.getTracks().forEach((track) => track.stop());
@@ -155,9 +137,7 @@ function Skyway(){
       const localMessage = messageForm.value;
         if(localMessage){
           room.send(localMessage);
-          setMessages(messages + `あなた: ${localMessage}\n`);
-          messages += `あなた: ${localMessage}\n`;
-          // messages.textContent += `あなた: ${localMessage}\n`;
+          addMessages(`あなた: ${localMessage}`);
           messageForm.value = '';
         }
     }
@@ -197,7 +177,7 @@ function Skyway(){
         <Box sx={{
           display: (isChat ? 'block' : 'none')
           }} >
-          <Chat messages={roonData.messages} />
+          <Chat messages={roomData.messages} />
         </Box>
 
         {/* 操作バー */}
