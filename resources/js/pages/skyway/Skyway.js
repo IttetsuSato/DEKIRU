@@ -51,6 +51,7 @@ function Skyway(){
     console.log(`video: ${isOffScreen}, audio: ${isMuted}`)
   }
   
+  //入室ボタンの処理
   const onStart = () => {
     if(peer){
       if (!peer.open) {
@@ -65,18 +66,26 @@ function Skyway(){
       let data = Object.assign({}, roomData);
       setRoomData(data);
       setEventListener(room);
+      setIsConnected(true);
 
     }
   }
 
+  //退室ボタンの処理
+  const onClose = () => {
+    roomData.room.close();
+    setIsConnected(false);
+  }
+
+  //チャットに変更があったとき、stateを更新する処理(setStateではうまく動かない)
   const addMessages = (text) => {
     roomData.messages += (text+ '\n');
     let data = Object.assign({}, roomData);
     setRoomData(data);
   }
 
+  //ルームの各イベントに対して処理を追加
   const setEventListener = (room) => {
-    const leaveTrigger = document.getElementById('leave-trigger');
     const sendTrigger = document.getElementById('send-trigger');
     const messageForm = document.getElementById('message-form');
     
@@ -140,9 +149,6 @@ function Skyway(){
           messageForm.value = '';
         }
     }
-    
-    //退室ボタンの処理
-    leaveTrigger.addEventListener('click', () => room.close(), { once: true });
   }
   
   const castVideo = () => {
@@ -171,8 +177,10 @@ function Skyway(){
 
         {/* 操作バー */}
         <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0 }}>
-          <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
-          <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
+          {isConnected
+          ?<Button color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
+          :<Button color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+          }
           <Button color="primary" variant="contained" onClick={() => {setIsMuted(prev => !prev); changeStream()}}>{isMuted ? <MicIcon /> : <MicOffIcon />}</Button>
           <Button color="primary" variant="contained" onClick={() => {setIsOffScreen(prev => !prev); changeStream()}}>{isOffScreen ? <VideocamIcon /> : <VideocamOffIcon />}</Button>
           <Button color="primary" variant="contained" onClick={() => {setIsChat(prev => !prev);}}><ChatIcon /></Button>
