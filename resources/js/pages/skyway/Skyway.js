@@ -2,7 +2,10 @@ import Peer,{SfuRoom} from "skyway-js";
 import React,{ useState, useRef, useEffect } from "react";
 import { TextField, Button } from '@material-ui/core';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper'
+import Paper from '@mui/material/Paper';
+
+import Video from './components/video';
+import Chat from './components/chat';
 
 import CallIcon from '@mui/icons-material/Call';
 import CallEndIcon from '@mui/icons-material/CallEnd';
@@ -15,8 +18,10 @@ import ChatIcon from '@mui/icons-material/Chat';
 
 function Skyway(){
   const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
-  const [remoteVideo, setRemoteVideo] = useState([]);
+  const [roonData, setRoonData] = useState({roon: null, messages: ''});
   const [localStream, setLocalStream] = useState('');
+  const [remoteVideo, setRemoteVideo] = useState([]);
+  const [messages, setMessages] = useState(''); //チャットメッセージ
   const [isConnected, setIsConnected] = useState(false); //false: 接続なし, true: 通話中
   const [isMuted, setIsMuted] = useState(true); //false: ミュート
   const [isOffScreen, setIsOffScreen] = useState(true); //false: 画面オフ
@@ -52,33 +57,51 @@ function Skyway(){
       if (!peer.open) {
         return;
       }
-      
       //peer.joinRoom()で接続 => roomに接続相手の情報が帰ってくる
       const room = peer.joinRoom(roomId, {
         mode: 'sfu',
         stream: localStream,
       });
-      console.log(room);
+      roonData.roon = room;
+      let data = Object.assign({}, roonData);
+      setRoonData(data);
       setEventListener(room);
+
     }
   }
+
+  const addMessages = (text) => {
+    roonData.messages += (text+ '\n');
+    let data = Object.assign({}, roonData);
+    setRoonData(data);
+  }
+
+
+  // if(roon){
+  //   //peerJoin: 誰かがroomに参加したときに発火
+  //   roon.on("peerJoin", (peerId) => {
+  //     setMessages(messages + `=== ${peerId} が参加しました ===\n`);
+  //   });
+  // }
     
   const setEventListener = (room) => {
     const leaveTrigger = document.getElementById('leave-trigger');
     const sendTrigger = document.getElementById('send-trigger');
     const messageForm = document.getElementById('message-form');
-    const messages = document.getElementById('messages');
-    
     
     //open: SkyWayサーバーとの接続が成功したタイミングで発火
     room.once("open", () => {
-      messages.textContent += '=== ルームに参加しました ===\n';
+      setMessages(messages + '=== ルームに参加しました ===\n');
+      addMessages('=== ルームに参加しました ===\n');
+      messages += '=== ルームに参加しました ===\n';
       setIsConnected(true);
     });
 
     //peerJoin: 誰かがroomに参加したときに発火
     room.on("peerJoin", (peerId) => {
-      messages.textContent += `=== ${peerId} が参加しました ===\n`;
+      setMessages(messages + `=== ${peerId} が参加しました ===\n`);
+      addMessages(`=== ${peerId} が参加しました ===\n`);
+      messages += `=== ${peerId} が参加しました ===\n`;
     });
 
     //stream: 相手の映像の情報
@@ -91,7 +114,11 @@ function Skyway(){
 
     //data: チャット受信
     room.on("data", ({data, src}) => {
-      messages.textContent += `${src}: ${data}\n`;
+
+      setMessages(messages + `${src}: ${data}\n`);
+      addMessages(`${src}: ${data}\n`);
+      messages += `${src}: ${data}\n`;
+      // messages.textContent += `${src}: ${data}\n`;
     })
     
     //peerLeave: 誰かがroomから退室したときに発火
@@ -104,13 +131,15 @@ function Skyway(){
           return video.peerId !== peerId;
         })
       );
-        messages.textContent += `=== ${peerId} が退室しました ===\n`;
+      setMessages(messages + `=== ${peerId} が退室しました ===\n`);
+        // messages.textContent += `=== ${peerId} が退室しました ===\n`;
     });
 
     //close: 自身が退室したときに発火
     room.once('close', () => {
       sendTrigger.removeEventListener('click', onClickSend);
-      messages.textContent += '== ルームから退室しました ===\n';
+      setMessages(messages + '== ルームから退室しました ===\n');
+      // messages.textContent += '== ルームから退室しました ===\n';
       setRemoteVideo(
         remoteVideo.filter((video) => {
           video.stream.getTracks().forEach((track) => track.stop());
@@ -126,7 +155,9 @@ function Skyway(){
       const localMessage = messageForm.value;
         if(localMessage){
           room.send(localMessage);
-          messages.textContent += `あなた: ${localMessage}\n`;
+          setMessages(messages + `あなた: ${localMessage}\n`);
+          messages += `あなた: ${localMessage}\n`;
+          // messages.textContent += `あなた: ${localMessage}\n`;
           messageForm.value = '';
         }
     }
@@ -139,7 +170,7 @@ function Skyway(){
     if(remoteVideo){
       return remoteVideo.map((video) => {
         if(video){
-          return <RemoteVideo video={video} key={video.peerId} />;
+          return <Video video={video} key={video.peerId} />;
         }else{
           return (
             <div>
@@ -161,17 +192,14 @@ function Skyway(){
         <Box sx={{ height: '100vh', display: 'flex', 'justifyContent': 'center', margin: 'auto'}}>
           {castVideo()}
         </Box>
+
         {/* チャット */}
-        {isChat &&
-          <Box sx={{width: '25%', 'backgroundColor': 'rgba(255,255,255,0.96)', height: '100vh', position: 'absolute', top: 0, right: 0, zIndex: 'modal', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-            {/* <Box id="messages" sx={{height: '100%'}}></Box> */}
-            <pre className="messages" id="messages"></pre>
-            <Box sx={{ display: 'flex'}}>
-                <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
-                <Button id="send-trigger" color="primary" variant="contained"><SendIcon /></Button>
-            </Box>
-          </Box>
-        }
+        <Box sx={{
+          display: (isChat ? 'block' : 'none')
+          }} >
+          <Chat messages={roonData.messages} />
+        </Box>
+
         {/* 操作バー */}
         <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0 }}>
           <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
@@ -194,19 +222,6 @@ function Skyway(){
       </Box>
     </div>
   );
-};
-
-const RemoteVideo = (props) => {
-  const {video} = props;
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = video.stream;
-      videoRef.current.play().catch((e) => console.log(e));
-    }
-  }, [props.video]);
-  return <video width="100%" ref={videoRef} playsInline autoPlay muted></video>;
 };
 
 export default Skyway;
