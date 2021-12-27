@@ -21,7 +21,6 @@ function Skyway(){
   const [roomData, setRoomData] = useState({room: null, messages: ''});
   const [localStream, setLocalStream] = useState('');
   const [remoteVideo, setRemoteVideo] = useState([]);
-  const [messages, setMessages] = useState(''); //チャットメッセージ
   const [isConnected, setIsConnected] = useState(false); //false: 接続なし, true: 通話中
   const [isMuted, setIsMuted] = useState(true); //false: ミュート
   const [isOffScreen, setIsOffScreen] = useState(true); //false: 画面オフ
@@ -151,14 +150,6 @@ function Skyway(){
       return remoteVideo.map((video) => {
         if(video){
           return <Video video={video} key={video.peerId} />;
-        }else{
-          return (
-            <div>
-              <Box sx={{width: '75%', height: '100vh', 'backgroundColor': '#333'}}>
-    
-              </Box>
-            </div>
-            );
         }
       });
     }
@@ -174,9 +165,7 @@ function Skyway(){
         </Box>
 
         {/* チャット */}
-        <Box sx={{
-          display: (isChat ? 'block' : 'none')
-          }} >
+        <Box sx={{display: (isChat ? 'block' : 'none')}} >
           <Chat messages={roomData.messages} />
         </Box>
 
