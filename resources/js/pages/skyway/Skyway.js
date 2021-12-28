@@ -15,6 +15,8 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import ChatIcon from '@mui/icons-material/Chat';
+import ScreenShareIcon from '@mui/icons-material/ScreenShare';
+import StopScreenShareIcon from '@mui/icons-material/StopScreenShare';
 
 function Skyway(){
   const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
@@ -22,8 +24,9 @@ function Skyway(){
   const [localStream, setLocalStream] = useState('');
   const [remoteVideo, setRemoteVideo] = useState([]);
   const [isConnected, setIsConnected] = useState(false); //false: 接続なし, true: 通話中
-  const [isMuted, setIsMuted] = useState(true); //false: ミュート
-  const [isOffScreen, setIsOffScreen] = useState(true); //false: 画面オフ
+  const [userDisplay, setUserDisplay] = useState(false); //true: 画面共有
+  const [userAudio, setUserAudio] = useState(true); //false: ミュート
+  const [userVideo, setUserVideo] = useState(true); //false: カメラオフ
   const [isChat, setIsChat] = useState(false); //false: チャットオフ
   const localVideoRef = useRef(null);
 
@@ -34,21 +37,38 @@ function Skyway(){
   //useEffect実行時、自身のカメラ映像取得
   useEffect(() => {
     changeStream();
-  }, []);
+  }, [userVideo, userAudio, userDisplay]);
 
+  //画面共有と自分の映像の取得・切り替え
   const changeStream = () => {
-    navigator.mediaDevices.getUserMedia({video: isOffScreen, audio: isMuted})
-    .then( stream => {
-      // 成功時にvideo要素にカメラ映像をセット
-      setLocalStream(stream);
-      localVideoRef.current.srcObject = stream;
-      localVideoRef.current.play().catch((e) => console.log(e));
-    }).catch( error => {
-      // 失敗時にはエラーログを出力
-      console.error('mediaDevice.getUserMedia() error:', error);
-      return;
-    });
-    console.log(`video: ${isOffScreen}, audio: ${isMuted}`)
+    if(userDisplay){
+        navigator.mediaDevices.getDisplayMedia({video: true, audio: userAudio})
+      .then( stream => {
+        // 成功時にvideo要素にカメラ映像をセット
+        setLocalStream(stream);
+        stream.getTracks()[0].addEventListener('ended', () => {
+          setUserDisplay(false);
+        });
+        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.play();
+      }).catch( error => {
+        console.error('mediaDevice.getDisplayMedia() error:', error);
+        return;
+      });
+    }else{
+      navigator.mediaDevices.getUserMedia({video: userVideo, audio: userAudio})
+      .then( stream => {
+        // 成功時にvideo要素にカメラ映像をセット
+        setLocalStream(stream);
+        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.play();
+      }).catch( error => {
+        // 失敗時にはエラーログを出力
+        console.error('mediaDevice.getUserMedia() error:', error);
+        return;
+      });
+    }
+    console.log(`video: ${userVideo}, audio: ${userAudio}`)
   }
   
   //入室ボタンの処理
@@ -181,8 +201,9 @@ function Skyway(){
           ?<Button color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
           :<Button color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
           }
-          <Button color="primary" variant="contained" onClick={() => {setIsMuted(prev => !prev); changeStream()}}>{isMuted ? <MicIcon /> : <MicOffIcon />}</Button>
-          <Button color="primary" variant="contained" onClick={() => {setIsOffScreen(prev => !prev); changeStream()}}>{isOffScreen ? <VideocamIcon /> : <VideocamOffIcon />}</Button>
+          <Button color="primary" variant="contained" onClick={() => {setUserAudio(prev => !prev)}}>{userAudio ? <MicIcon /> : <MicOffIcon />}</Button>
+          <Button color="primary" variant="contained" onClick={() => {setUserDisplay(prev => !prev)}}>{userDisplay ? <ScreenShareIcon /> : <StopScreenShareIcon/>}</Button>
+          <Button color="primary" variant="contained" onClick={() => {setUserVideo(prev => !prev)}}>{userVideo ? <VideocamIcon /> : <VideocamOffIcon />}</Button>
           <Button color="primary" variant="contained" onClick={() => {setIsChat(prev => !prev);}}><ChatIcon /></Button>
         </Box>
 

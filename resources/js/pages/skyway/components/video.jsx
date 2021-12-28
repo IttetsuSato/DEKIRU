@@ -10,7 +10,7 @@ const Video = (props) => {
       videoRef.current.srcObject = video.stream;
       videoRef.current.play().catch((e) => console.log(e));
     }
-  }, [props.video]);
+  }, [video]);
 
   return <video width="100%" ref={videoRef} playsInline autoPlay muted></video>;
 };
