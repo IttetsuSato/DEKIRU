@@ -2,6 +2,7 @@ import Peer,{SfuRoom} from "skyway-js";
 import React,{ useState, useRef, useEffect } from "react";
 import { TextField, Button } from '@material-ui/core';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 
 import Video from './components/video';
@@ -44,8 +45,9 @@ function Skyway(){
     if(userDisplay){
         navigator.mediaDevices.getDisplayMedia({video: true, audio: userAudio})
       .then( stream => {
-        // 成功時にvideo要素にカメラ映像をセット
+        // 成功時にvideo要素に共有映像をセット
         setLocalStream(stream);
+        //共有終了時、画面共有の変数をfalseに
         stream.getTracks()[0].addEventListener('ended', () => {
           setUserDisplay(false);
         });
@@ -53,6 +55,7 @@ function Skyway(){
         localVideoRef.current.play();
       }).catch( error => {
         console.error('mediaDevice.getDisplayMedia() error:', error);
+        setUserDisplay(false);
         return;
       });
     }else{
@@ -68,7 +71,6 @@ function Skyway(){
         return;
       });
     }
-    console.log(`video: ${userVideo}, audio: ${userAudio}`)
   }
   
   //入室ボタンの処理
@@ -196,20 +198,41 @@ function Skyway(){
         </Box>
 
         {/* 操作バー */}
-        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0 }}>
-          {isConnected
-          ?<Button color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
-          :<Button color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
-          }
-          <Button color="primary" variant="contained" onClick={() => {setUserAudio(prev => !prev)}}>{userAudio ? <MicIcon /> : <MicOffIcon />}</Button>
-          <Button color="primary" variant="contained" onClick={() => {setUserDisplay(prev => !prev)}}>{userDisplay ? <ScreenShareIcon /> : <StopScreenShareIcon/>}</Button>
-          <Button color="primary" variant="contained" onClick={() => {setUserVideo(prev => !prev)}}>{userVideo ? <VideocamIcon /> : <VideocamOffIcon />}</Button>
-          <Button color="primary" variant="contained" onClick={() => {setIsChat(prev => !prev);}}><ChatIcon /></Button>
+        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0, 'backgroundColor': 'rgba(255,255,255,0.96)' }}>
+          <Stack justifyContent="space-between" direction="row" spacing={4}>
+            <Stack justifyContent="center" direction="row" spacing={2}>
+                <Box sx={{fontSize: '0.5rem'}}>
+                  <Button color="primary" variant="text" onClick={() => {setUserAudio(prev => !prev)}}>
+                    {userAudio
+                    ? <Stack alignItems="center"><MicIcon />ミュート</Stack>
+                    : <Stack alignItems="center"><MicOffIcon />ミュート解除</Stack>
+                    }
+                  </Button>
+                  <Button color="primary" variant="text" onClick={() => {setUserVideo(prev => !prev)}}>
+                    {userVideo
+                    ? <Stack alignItems="center"><VideocamIcon />カメラオン</Stack>
+                    : <Stack alignItems="center"><VideocamOffIcon />カメラオフ</Stack>
+                    }
+                  </Button>
+                  <Button color="primary" variant="text" onClick={() => {setUserDisplay(prev => !prev)}}>
+                    {userDisplay
+                    ? <Stack alignItems="center"><ScreenShareIcon />画面共有</Stack>
+                    : <Stack alignItems="center"><StopScreenShareIcon/>共有終了</Stack>
+                    }
+                  </Button>
+                  <Button color="primary" variant="text" onClick={() => {setIsChat(prev => !prev)}}><Stack alignItems="center"><ChatIcon />チャット</Stack></Button>
+                </Box>
+            </Stack>
+            {isConnected
+            ?<Button size="small" color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
+            :<Button size="small" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+            }
+          </Stack>
         </Box>
 
         {/* 自分の映像 */}
         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
-          <Box sx={{ width: '25%' }}>
+          <Box sx={{ width: '20%' }}>
             <video
             width="100%"
             ref={localVideoRef}
