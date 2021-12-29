@@ -199,35 +199,33 @@ function Skyway(){
 
         {/* 操作バー */}
         <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0, 'backgroundColor': 'rgba(255,255,255,0.96)' }}>
-          <Stack justifyContent="space-between" direction="row" spacing={4}>
-            <Stack justifyContent="center" direction="row" spacing={2}>
-                <Box sx={{fontSize: '0.5rem'}}>
-                  <Button color="primary" variant="text" onClick={() => {setUserAudio(prev => !prev)}}>
-                    {userAudio
-                    ? <Stack alignItems="center"><MicIcon />ミュート</Stack>
-                    : <Stack alignItems="center"><MicOffIcon />ミュート解除</Stack>
-                    }
-                  </Button>
-                  <Button color="primary" variant="text" onClick={() => {setUserVideo(prev => !prev)}}>
-                    {userVideo
-                    ? <Stack alignItems="center"><VideocamIcon />カメラオン</Stack>
-                    : <Stack alignItems="center"><VideocamOffIcon />カメラオフ</Stack>
-                    }
-                  </Button>
-                  <Button color="primary" variant="text" onClick={() => {setUserDisplay(prev => !prev)}}>
-                    {userDisplay
-                    ? <Stack alignItems="center"><ScreenShareIcon />画面共有</Stack>
-                    : <Stack alignItems="center"><StopScreenShareIcon/>共有終了</Stack>
-                    }
-                  </Button>
-                  <Button color="primary" variant="text" onClick={() => {setIsChat(prev => !prev)}}><Stack alignItems="center"><ChatIcon />チャット</Stack></Button>
-                </Box>
+          <Stack justifyContent="center" direction="row" spacing={2}>
+              <Box sx={{fontSize: '0.5rem'}}>
+                <Button color="primary" variant="text" onClick={() => {setUserAudio(prev => !prev)}}>
+                  {userAudio
+                  ? <Stack alignItems="center"><MicIcon />ミュート</Stack>
+                  : <Stack alignItems="center"><MicOffIcon />ミュート解除</Stack>
+                  }
+                </Button>
+                <Button color="primary" variant="text" onClick={() => {setUserVideo(prev => !prev)}}>
+                  {userVideo
+                  ? <Stack alignItems="center"><VideocamIcon />カメラオフ</Stack>
+                  : <Stack alignItems="center"><VideocamOffIcon />カメラオン</Stack>
+                  }
+                </Button>
+                <Button color="primary" variant="text" onClick={() => {setUserDisplay(prev => !prev)}}>
+                  {userDisplay
+                  ? <Stack alignItems="center"><ScreenShareIcon />共有終了</Stack>
+                  : <Stack alignItems="center"><StopScreenShareIcon/>画面共有</Stack>
+                  }
+                </Button>
+                <Button color="primary" variant="text" onClick={() => {setIsChat(prev => !prev)}}><Stack alignItems="center"><ChatIcon />チャット</Stack></Button>
+                {isConnected
+                ?<Button size="small" color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
+                :<Button size="small" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+                }
+              </Box>
             </Stack>
-            {isConnected
-            ?<Button size="small" color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
-            :<Button size="small" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
-            }
-          </Stack>
         </Box>
 
         {/* 自分の映像 */}
