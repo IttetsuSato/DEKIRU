@@ -199,8 +199,8 @@ function Skyway(){
 
         {/* 操作バー */}
         <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0, 'backgroundColor': 'rgba(255,255,255,0.96)' }}>
-          <Stack justifyContent="center" direction="row" spacing={2}>
-              <Box sx={{fontSize: '0.5rem'}}>
+          <Stack justifyContent="center" direction="row" spacing={4}>
+              <Box>
                 <Button color="primary" variant="text" onClick={() => {setUserAudio(prev => !prev)}}>
                   {userAudio
                   ? <Stack alignItems="center"><MicIcon />ミュート</Stack>
@@ -220,11 +220,13 @@ function Skyway(){
                   }
                 </Button>
                 <Button color="primary" variant="text" onClick={() => {setIsChat(prev => !prev)}}><Stack alignItems="center"><ChatIcon />チャット</Stack></Button>
+              </Box>
+              <Stack justifyContent="center">
                 {isConnected
                 ?<Button size="small" color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
                 :<Button size="small" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
                 }
-              </Box>
+              </Stack>
             </Stack>
         </Box>
 
