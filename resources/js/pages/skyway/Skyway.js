@@ -2,7 +2,11 @@ import Peer,{SfuRoom} from "skyway-js";
 import React,{ useState, useRef, useEffect } from "react";
 import { TextField, Button } from '@material-ui/core';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
+
+import Video from './components/video';
+import Chat from './components/chat';
 
 import CallIcon from '@mui/icons-material/Call';
 import CallEndIcon from '@mui/icons-material/CallEnd';
@@ -12,14 +16,18 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import ChatIcon from '@mui/icons-material/Chat';
+import ScreenShareIcon from '@mui/icons-material/ScreenShare';
+import StopScreenShareIcon from '@mui/icons-material/StopScreenShare';
 
 function Skyway(){
   const peer = new Peer({key: '95ba327e-64d1-4c05-8f9f-ad00ac893e07'});
-  const [remoteVideo, setRemoteVideo] = useState([]);
+  const [roomData, setRoomData] = useState({room: null, messages: ''});
   const [localStream, setLocalStream] = useState('');
+  const [remoteVideo, setRemoteVideo] = useState([]);
   const [isConnected, setIsConnected] = useState(false); //false: 接続なし, true: 通話中
-  const [isMuted, setIsMuted] = useState(true); //false: ミュート
-  const [isOffScreen, setIsOffScreen] = useState(true); //false: 画面オフ
+  const [userDisplay, setUserDisplay] = useState(false); //true: 画面共有
+  const [userAudio, setUserAudio] = useState(true); //false: ミュート
+  const [userVideo, setUserVideo] = useState(true); //false: カメラオフ
   const [isChat, setIsChat] = useState(false); //false: チャットオフ
   const localVideoRef = useRef(null);
 
@@ -30,55 +38,88 @@ function Skyway(){
   //useEffect実行時、自身のカメラ映像取得
   useEffect(() => {
     changeStream();
-  }, []);
+  }, [userVideo, userAudio, userDisplay]);
 
+  //画面共有と自分の映像の取得・切り替え
   const changeStream = () => {
-    navigator.mediaDevices.getUserMedia({video: isOffScreen, audio: isMuted})
-    .then( stream => {
-      // 成功時にvideo要素にカメラ映像をセット
-      setLocalStream(stream);
-      localVideoRef.current.srcObject = stream;
-      localVideoRef.current.play().catch((e) => console.log(e));
-    }).catch( error => {
-      // 失敗時にはエラーログを出力
-      console.error('mediaDevice.getUserMedia() error:', error);
-      return;
-    });
-    console.log(`video: ${isOffScreen}, audio: ${isMuted}`)
+    if(userDisplay){
+        navigator.mediaDevices.getDisplayMedia({video: true, audio: userAudio})
+      .then( stream => {
+        // 成功時にvideo要素に共有映像をセット
+        setLocalStream(stream);
+        //共有終了時、画面共有の変数をfalseに
+        stream.getTracks()[0].addEventListener('ended', () => {
+          setUserDisplay(false);
+        });
+        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.play();
+      }).catch( error => {
+        console.error('mediaDevice.getDisplayMedia() error:', error);
+        setUserDisplay(false);
+        return;
+      });
+    }else{
+      navigator.mediaDevices.getUserMedia({video: userVideo, audio: userAudio})
+      .then( stream => {
+        // 成功時にvideo要素にカメラ映像をセット
+        setLocalStream(stream);
+        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.play();
+      }).catch( error => {
+        // 失敗時にはエラーログを出力
+        console.error('mediaDevice.getUserMedia() error:', error);
+        return;
+      });
+    }
   }
   
+  //入室ボタンの処理
   const onStart = () => {
     if(peer){
       if (!peer.open) {
         return;
       }
-      
       //peer.joinRoom()で接続 => roomに接続相手の情報が帰ってくる
       const room = peer.joinRoom(roomId, {
         mode: 'sfu',
         stream: localStream,
       });
-      console.log(room);
+      roomData.room = room;
+      let data = Object.assign({}, roomData);
+      setRoomData(data);
       setEventListener(room);
+      setIsConnected(true);
+
     }
   }
-    
+
+  //退室ボタンの処理
+  const onClose = () => {
+    roomData.room.close();
+    setIsConnected(false);
+  }
+
+  //チャットに変更があったとき、stateを更新する処理(setStateではうまく動かない)
+  const addMessages = (text) => {
+    roomData.messages += (text+ '\n');
+    let data = Object.assign({}, roomData);
+    setRoomData(data);
+  }
+
+  //ルームの各イベントに対して処理を追加
   const setEventListener = (room) => {
-    const leaveTrigger = document.getElementById('leave-trigger');
     const sendTrigger = document.getElementById('send-trigger');
     const messageForm = document.getElementById('message-form');
-    const messages = document.getElementById('messages');
-    
     
     //open: SkyWayサーバーとの接続が成功したタイミングで発火
     room.once("open", () => {
-      messages.textContent += '=== ルームに参加しました ===\n';
+      addMessages('=== ルームに参加しました ===');
       setIsConnected(true);
     });
 
     //peerJoin: 誰かがroomに参加したときに発火
     room.on("peerJoin", (peerId) => {
-      messages.textContent += `=== ${peerId} が参加しました ===\n`;
+      addMessages(`=== ${peerId} が参加しました ===`);
     });
 
     //stream: 相手の映像の情報
@@ -91,7 +132,7 @@ function Skyway(){
 
     //data: チャット受信
     room.on("data", ({data, src}) => {
-      messages.textContent += `${src}: ${data}\n`;
+      addMessages(`${src}: ${data}`);
     })
     
     //peerLeave: 誰かがroomから退室したときに発火
@@ -104,13 +145,13 @@ function Skyway(){
           return video.peerId !== peerId;
         })
       );
-        messages.textContent += `=== ${peerId} が退室しました ===\n`;
+      addMessages(`=== ${peerId} が退室しました ===`);
     });
 
     //close: 自身が退室したときに発火
     room.once('close', () => {
       sendTrigger.removeEventListener('click', onClickSend);
-      messages.textContent += '== ルームから退室しました ===\n';
+      addMessages('== ルームから退室しました ===');
       setRemoteVideo(
         remoteVideo.filter((video) => {
           video.stream.getTracks().forEach((track) => track.stop());
@@ -126,28 +167,17 @@ function Skyway(){
       const localMessage = messageForm.value;
         if(localMessage){
           room.send(localMessage);
-          messages.textContent += `あなた: ${localMessage}\n`;
+          addMessages(`あなた: ${localMessage}`);
           messageForm.value = '';
         }
     }
-    
-    //退室ボタンの処理
-    leaveTrigger.addEventListener('click', () => room.close(), { once: true });
   }
   
   const castVideo = () => {
     if(remoteVideo){
       return remoteVideo.map((video) => {
         if(video){
-          return <RemoteVideo video={video} key={video.peerId} />;
-        }else{
-          return (
-            <div>
-              <Box sx={{width: '75%', height: '100vh', 'backgroundColor': '#333'}}>
-    
-              </Box>
-            </div>
-            );
+          return <Video video={video} key={video.peerId} />;
         }
       });
     }
@@ -161,29 +191,46 @@ function Skyway(){
         <Box sx={{ height: '100vh', display: 'flex', 'justifyContent': 'center', margin: 'auto'}}>
           {castVideo()}
         </Box>
+
         {/* チャット */}
-        {isChat &&
-          <Box sx={{width: '25%', 'backgroundColor': 'rgba(255,255,255,0.96)', height: '100vh', position: 'absolute', top: 0, right: 0, zIndex: 'modal', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-            {/* <Box id="messages" sx={{height: '100%'}}></Box> */}
-            <pre className="messages" id="messages"></pre>
-            <Box sx={{ display: 'flex'}}>
-                <TextField id="message-form" label="チャット" variant="outlined" name="name"  />
-                <Button id="send-trigger" color="primary" variant="contained"><SendIcon /></Button>
-            </Box>
-          </Box>
-        }
+        <Box sx={{display: (isChat ? 'block' : 'none')}} >
+          <Chat messages={roomData.messages} />
+        </Box>
+
         {/* 操作バー */}
-        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0 }}>
-          <Button id="call-trigger" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
-          <Button id="leave-trigger" color="secondary" variant="contained" startIcon={<CallEndIcon />}>終了</Button>
-          <Button color="primary" variant="contained" onClick={() => {setIsMuted(prev => !prev); changeStream()}}>{isMuted ? <MicIcon /> : <MicOffIcon />}</Button>
-          <Button color="primary" variant="contained" onClick={() => {setIsOffScreen(prev => !prev); changeStream()}}>{isOffScreen ? <VideocamIcon /> : <VideocamOffIcon />}</Button>
-          <Button color="primary" variant="contained" onClick={() => {setIsChat(prev => !prev);}}><ChatIcon /></Button>
+        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, right: 0, 'backgroundColor': 'rgba(255,255,255,0.96)' }}>
+          <Stack justifyContent="center" direction="row" spacing={2}>
+              <Box sx={{fontSize: '0.5rem'}}>
+                <Button color="primary" variant="text" onClick={() => {setUserAudio(prev => !prev)}}>
+                  {userAudio
+                  ? <Stack alignItems="center"><MicIcon />ミュート</Stack>
+                  : <Stack alignItems="center"><MicOffIcon />ミュート解除</Stack>
+                  }
+                </Button>
+                <Button color="primary" variant="text" onClick={() => {setUserVideo(prev => !prev)}}>
+                  {userVideo
+                  ? <Stack alignItems="center"><VideocamIcon />カメラオフ</Stack>
+                  : <Stack alignItems="center"><VideocamOffIcon />カメラオン</Stack>
+                  }
+                </Button>
+                <Button color="primary" variant="text" onClick={() => {setUserDisplay(prev => !prev)}}>
+                  {userDisplay
+                  ? <Stack alignItems="center"><ScreenShareIcon />共有終了</Stack>
+                  : <Stack alignItems="center"><StopScreenShareIcon/>画面共有</Stack>
+                  }
+                </Button>
+                <Button color="primary" variant="text" onClick={() => {setIsChat(prev => !prev)}}><Stack alignItems="center"><ChatIcon />チャット</Stack></Button>
+                {isConnected
+                ?<Button size="small" color="secondary" variant="contained" onClick={() => onClose()} startIcon={<CallEndIcon />}>終了</Button>
+                :<Button size="small" color="primary" variant="contained" onClick={() => onStart()} startIcon={<CallIcon />}>開始</Button>
+                }
+              </Box>
+            </Stack>
         </Box>
 
         {/* 自分の映像 */}
         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
-          <Box sx={{ width: '25%' }}>
+          <Box sx={{ width: '20%' }}>
             <video
             width="100%"
             ref={localVideoRef}
@@ -194,19 +241,6 @@ function Skyway(){
       </Box>
     </div>
   );
-};
-
-const RemoteVideo = (props) => {
-  const {video} = props;
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = video.stream;
-      videoRef.current.play().catch((e) => console.log(e));
-    }
-  }, [props.video]);
-  return <video width="100%" ref={videoRef} playsInline autoPlay muted></video>;
 };
 
 export default Skyway;
